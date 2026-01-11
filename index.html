@@ -1,1032 +1,282 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Steal a Brainrot - Cursed Spin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YHVX3NMDBY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YHVX3NMDBY');
+    
+</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PLAIOVA</title>
+
+    <!-- Sukar Font from Fontshare -->
+    <link href="https://api.fontshare.com/v2/css?f[]=sukar@400&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --bg-dark: #050000;
-            --cursed-red: #8a0000;
-            --blood-red: #ff0000;
-            --glow-red: #ff3333;
-            --text-main: #eeeeee;
-            --gold: #ffd700;
-            --segment-count: 4; 
-        }
-
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at center, #220000 0%, #000000 100%);
-            color: var(--text-main);
-            font-family: 'Chakra Petch', sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start; 
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Ambient Background Effects */
-        .fog {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
-            opacity: 0.3;
-            animation: fogMove 60s linear infinite;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        @keyframes fogMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 1000px 0; }
-        }
-
-        /* Main Game Container */
-        .game-container {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            flex-shrink: 0; 
-        }
-
-        /* Typography */
-        h1 {
-            font-family: 'Creepster', cursive;
-            font-size: 2.8rem; 
-            margin: 0 0 5px 0;
-            text-align: center;
-            color: var(--blood-red);
-            text-shadow: 0 0 10px var(--cursed-red), 0 0 20px var(--glow-red);
-            letter-spacing: 2px;
-            animation: pulseTitle 3s infinite ease-in-out;
-            line-height: 1;
-        }
-
-        /* REDESIGNED SUBTITLE */
-        .subtitle {
-            font-size: 1rem;
-            font-weight: 800;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            text-shadow: 
-                0 0 5px var(--blood-red), 
-                0 0 10px var(--cursed-red),
-                2px 2px 0px #000;
-            position: relative;
-            display: inline-block;
-            animation: subtitleGlitch 4s infinite linear;
-        }
-
-        .subtitle::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 2px;
-            background: var(--blood-red);
-            margin-top: 5px;
-            box-shadow: 0 0 10px var(--blood-red);
-            opacity: 0.8;
-        }
-
-        @keyframes subtitleGlitch {
-            0% { transform: skew(0deg); opacity: 1; }
-            2% { transform: skew(5deg); opacity: 0.9; }
-            4% { transform: skew(-5deg); opacity: 1; }
-            6% { transform: skew(0deg); opacity: 1; }
-            70% { transform: skew(0deg); opacity: 1; }
-            71% { transform: translateX(2px); }
-            72% { transform: translateX(-2px); }
-            73% { transform: translateX(0); }
-            100% { transform: skew(0deg); opacity: 1; }
-        }
-
-        @keyframes pulseTitle {
-            0%, 100% { transform: scale(1); text-shadow: 0 0 10px var(--cursed-red); }
-            50% { transform: scale(1.05); text-shadow: 0 0 25px var(--blood-red), 0 0 40px var(--glow-red); }
-        }
-
-        /* Wheel Assembly */
-        .wheel-wrapper {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px var(--cursed-red));
-        }
-
-        @media (min-width: 400px) {
-            .wheel-wrapper { width: 320px; height: 320px; }
-        }
-
-        /* The Pointer (Fixed at Top) */
-        .pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 50px;
-            z-index: 20;
-            filter: drop-shadow(0 0 5px black);
-        }
-        
-        .pointer::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid var(--gold);
-            filter: drop-shadow(0 0 10px var(--blood-red));
-        }
-
-        /* The Rotating Wheel */
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 8px solid #222;
-            box-shadow: inset 0 0 20px #000, 0 0 10px var(--blood-red);
-            position: relative;
-            overflow: hidden;
-            transform: rotate(0deg); 
-            background: #111;
-        }
-
-        /* Visual Center Hub */
-        .wheel::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px; 
-            height: 100px;
-            background: radial-gradient(circle, #000 0%, #2a0000 100%);
-            border-radius: 50%;
-            border: 4px solid #440000;
-            box-shadow: 0 0 20px #000;
-            z-index: 5;
-        }
-
-        /* Conic Gradient Background for 4 Segments */
-        .wheel-bg {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 50%;
-            background: conic-gradient(
-                #4a0000 0deg 90deg,
-                #000 90deg 180deg,
-                #4a0000 180deg 270deg,
-                #000 270deg 360deg
-            );
-            opacity: 0.6;
-            z-index: 1;
-        }
-
-        /* Segment Content Container */
-        .segment {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 10px;
-            pointer-events: none;
-        }
-
-        /* Item Wrapper */
-        .item-wrapper {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            transform-origin: 0 0;
-            z-index: 2;
-        }
-
-        .item-content {
-            position: absolute;
-            left: -35px; 
-            top: -110px; 
-            width: 70px; 
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .item-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #000;
-            border: 2px solid var(--cursed-red);
-            object-fit: cover;
-            box-shadow: 0 0 8px var(--cursed-red);
-            filter: brightness(1.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
-        }
-
-        /* Nothing Segment Special Style */
-        .item-wrapper[data-type="bad"] .item-icon {
-            border-color: #555;
-            filter: grayscale(100%) brightness(0.8);
-            color: #ccc; 
-        }
-
-        /* Controls */
-        .controls {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .urgency-text {
-            font-size: 0.75rem;
-            color: var(--blood-red);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: flicker 2s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-            52% { opacity: 1; }
-            54% { opacity: 0.2; }
-        }
-
-        .spin-btn {
-            background: linear-gradient(180deg, #ff3333 0%, #8a0000 100%);
-            border: 2px solid var(--gold);
-            color: white;
-            font-family: 'Creepster', cursive;
-            font-size: 2rem;
-            padding: 8px 40px;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 20px var(--cursed-red), inset 0 0 10px rgba(0,0,0,0.5);
-            transition: transform 0.1s, box-shadow 0.2s;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .spin-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--blood-red), inset 0 0 5px rgba(255,255,255,0.3);
-        }
-
-        .spin-btn:active {
-            transform: scale(0.95);
-        }
-
-        .spin-btn:disabled {
-            filter: grayscale(1);
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        /* LIVE ACTIVITY FEED */
-        .activity-feed {
-            position: relative;
-            z-index: 10;
-            width: 90%;
-            max-width: 500px;
-            background: rgba(0, 0, 0, 0.85);
-            border: 1px solid var(--cursed-red);
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            height: 180px; 
-            flex-shrink: 0;
-        }
-
-        .feed-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 15px;
-            border-bottom: 1px solid #333;
-            background: rgba(138, 0, 0, 0.5);
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--text-main);
-            letter-spacing: 1px;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--blood-red);
-            border-radius: 50%;
-            box-shadow: 0 0 5px var(--blood-red);
-            animation: pulseDot 1.5s infinite;
-        }
-
-        @keyframes pulseDot {
-            0% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.5; transform: scale(1); }
-        }
-
-        .feed-list {
-            padding: 10px 15px;
-            overflow-y: auto;
-            flex-grow: 1;
-            scrollbar-width: thin;
-            scrollbar-color: var(--cursed-red) #000;
-        }
-
-        .feed-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .feed-list::-webkit-scrollbar-track {
-            background: #000;
-        }
-        .feed-list::-webkit-scrollbar-thumb {
-            background-color: var(--cursed-red);
-            border-radius: 3px;
-        }
-
-        .feed-item {
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-            opacity: 0; 
-            animation: fadeInSlide 0.4s ease-out forwards;
-            line-height: 1.4;
-            display: flex;
-            gap: 5px;
-        }
-
-        @keyframes fadeInSlide {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .feed-user {
-            color: var(--gold);
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .feed-action {
-            color: #ccc;
-        }
-
-        .feed-item {
-            border-left: 2px solid transparent;
-            padding-left: 8px;
-            transition: border-color 0.3s;
-        }
-
-        /* Highlight user's own spin */
-        .feed-item.is-local {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
-            border-left: 2px solid var(--gold);
-            padding: 6px 8px; 
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* Overlay / Modal */
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .result-card {
-            background: #111;
-            border: 4px solid var(--cursed-red);
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 90%;
-            width: 320px;
-            box-shadow: 0 0 50px var(--cursed-red);
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .overlay.active .result-card {
-            transform: scale(1);
-        }
-
-        .result-title {
-            font-family: 'Creepster', cursive;
-            font-size: 2rem;
-            margin: 0 0 20px 0;
-            color: #fff;
-        }
-
-        .result-image-container {
-            width: 140px;
-            height: 140px;
-            margin: 0 auto 20px auto;
-            position: relative;
-        }
-
-        .result-image {
-            width: 140px;
-            height: 140px;
-            border-radius: 10px;
-            border: 3px solid #333;
-            object-fit: cover;
-            position: absolute;
-            top: 0; left: 0;
-        }
-
-        .result-emoji {
-            width: 140px;
-            height: 140px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 100px;
-            border: 3px solid #333;
-            border-radius: 10px;
-            background: #000;
-            position: absolute;
-            top: 0; left: 0;
-            display: none;
-        }
-
-        .result-name {
-            font-family: 'Chakra Petch', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--gold);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-
-        /* Win specific styles */
-        .win-style {
-            border-color: var(--gold);
-            box-shadow: 0 0 50px var(--gold);
-        }
-
-        /* Lose specific styles */
-        .lose-style {
-            border-color: #333;
-            box-shadow: 0 0 30px #000;
-        }
-        .lose-style .result-name {
-            color: #999;
-            text-shadow: none;
-        }
-
-        /* USERNAME INPUT STYLES */
-        .username-input-container {
-            margin-bottom: 20px;
-            width: 100%;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .username-input {
-            width: 100%;
-            background: #000;
-            border: 2px solid #333;
-            color: #fff;
-            font-family: 'Chakra Petch', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            text-align: center;
-            padding: 12px 10px;
-            border-radius: 5px;
-            outline: none;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .username-input::placeholder {
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .username-input:focus {
-            border-color: var(--blood-red);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-            color: #fff;
-        }
-        
-        .username-input.error {
-            animation: inputFlash 0.3s ease;
-            border-color: #fff;
-        }
-
-        @keyframes inputFlash {
-            0% { background-color: #fff; color: #000; }
-            100% { background-color: #000; color: #fff; }
-        }
-
-        /* Claim Button */
-        .close-btn {
-            background: #050000;
-            border: 2px solid var(--blood-red);
-            color: var(--blood-red);
-            font-family: 'Chakra Petch', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 12px 50px;
-            border-radius: 50px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2), inset 0 0 10px rgba(0,0,0,0.8);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .close-btn:hover {
-            background: var(--blood-red);
-            color: #fff;
-            box-shadow: 0 0 25px var(--cursed-red), inset 0 0 5px rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-        .close-btn:active {
-            transform: translateY(1px);
-        }
-        .close-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background: #111;
-            border-color: #333;
-            color: #555;
-            transform: none;
-        }
-
-        /* Cursed Effects */
-        .shake {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        .dark-flash {
-            animation: darkFlash 0.2s ease-out;
-        }
-
-        @keyframes darkFlash {
-            0% { background-color: white; }
-            100% { background-color: var(--bg-dark); }
-        }
-
-        /* Particles */
-        .particles {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .particle {
-            position: absolute;
-            background: var(--blood-red);
-            border-radius: 50%;
-            opacity: 0;
-            animation: rise 5s infinite linear;
-        }
-        @keyframes rise {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            50% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-        }
+       
+    @import url('https://api.fontshare.com/v2/css?f[]=sukar@400&display=swap');
+
+
+    body {
+        background-color: #121212;
+        font-family: 'Sukar', sans-serif;
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        font-size: 48px;
+        background: linear-gradient(90deg, #22c55e, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        margin-top: 20px;
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+        from {
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        }
+        to {
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.9);
+        }
+    }
+
+    input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: none;
+        font-size: 16px;
+        font-family: 'Sukar', sans-serif;
+    }
+
+    .app-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .app-card {
+        background-color: #1E1E1E;
+        padding: 15px;
+        border-radius: 10px;
+        width: 220px;
+        text-align: center;
+        font-family: 'Sukar', sans-serif;
+    }
+
+    .app-card img {
+        width: 160px;
+        height: 160px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+    }
+
+    .install-btn {
+        background-color: #22c55e;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+        box-shadow: 0 0 10px #22c55e;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: pulse 2s infinite;
+        font-family: 'Sukar', sans-serif;
+    }
+
+    .install-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #22c55e, 0 0 40px #22c55e;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 10px #22c55e; }
+        50% { box-shadow: 0 0 20px #22c55e; }
+        100% { box-shadow: 0 0 10px #22c55e; }
+    }
+
+    #no-results {
+        display: none;
+        margin-top: 20px;
+        color: #ff4d4d;
+        font-weight: bold;
+        font-family: 'Sukar', sans-serif;
+    }
 
     </style>
 </head>
 <body>
 
-    <div class="fog"></div>
-    <div class="particles" id="particles"></div>
+    <h1>PLAIOVA</h1>
+    <input type="text" id="searchInput" placeholder="APP OR GAME NAME"/>
 
-    <div class="game-container">
-        <h1>STEAL A BRAINROT</h1>
-        <div class="subtitle">Cursed Spin Event</div>
+    <div id="no-results">No games found.</div>
 
-        <div class="wheel-wrapper">
-            <div class="pointer"></div>
-            <div class="wheel" id="wheel">
-                <div class="wheel-bg"></div>
-                <!-- Segments will be injected by JS -->
-            </div>
+    <div class="app-container" id="appContainer">
+        <!-- Your app cards here (unchanged) -->
+        
+<div class="app-card">
+            <img src="https://i.postimg.cc/wT6q3rwr/MOD-20250923-120452-0000.jpg" alt="Clash Royale"/>
+            <h3>Clash Royale  (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://plaiovagames.site/cl/i/ve9vng" class="install-btn">install</a>
+        </div>
+        
+        <div class="app-card">
+            <img src="https://i.postimg.cc/hGJPc72P/MOD-20250923-120411-0000.jpg" alt="Clash of Clans"/>
+            <h3>Clash of Clans (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://plaiovagames.site/cl/i/ex8ngl
+" class="install-btn">install</a>
+        </div>
+    
+                <div class="app-card">
+            <img src="https://i.postimg.cc/SNrcZQPf/MOD-20251004-135156-0000.jpg" alt="Brawl Stars"/>
+            <h3>Brawl Stars  (Unlimited Gems)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/5nex46" class="install-btn">install</a>
+        </div>
+        <div class="app-card">
+            <img src="https://i.postimg.cc/NfCKjN65/Votre-Texte-De-Paragraphe-MID-20250411-110859-0000.jpg" alt="Love and Deepspace"/>
+            <h3>Love and Deepspace (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/podxr5" class="install-btn">install</a>
+        </div>
+           
+ <div class="app-card">
+            <img src="https://i.postimg.cc/R0zWdQkZ/gta5.jpg" alt="GTA 5 Mobile"/>
+            <h3>GTA 5 Mobile (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/lk24nk" class="install-btn">install</a>
+        </div>
+        
+         <div class="app-card">
+            <img src="https://i.postimg.cc/hvDC79BC/icon.png" alt="Assassin’s Creed Shadows"/>
+            <h3>Assassin’s Creed Shadows</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/7j7dm9" class="install-btn">install</a>
         </div>
 
-        <div class="controls">
-            <div class="urgency-text" id="urgency">Cursed Energy Fading...</div>
-            <button class="spin-btn" id="spinBtn">SPIN NOW</button>
+         <div class="app-card">
+            <img src="https://i.postimg.cc/bvT8X93g/inzoi1.png" alt="inZOI Mobile"/>
+            <h3>inZOI Mobile</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/l7qkdj" class="install-btn">install</a>
         </div>
+
+         <div class="app-card">
+            <img src="https://i.postimg.cc/XJCRjKgt/icon-1.webp" alt="Little Nightmares 2"/>
+            <h3>Little Nightmares 2</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/ex863d" class="install-btn">install</a>
+        </div>
+
+        <div class="app-card">
+            <img src="https://i.postimg.cc/kMyjxhDf/grounded.png" alt="Grounded 2"/>
+            <h3>Grounded 2 Mobile</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/ve9odm" class="install-btn">install</a>
+        </div>
+
+        <div class="app-card">
+            <img src="https://i.postimg.cc/HLhTXxWm/Votre-Texte-De-Paragraphe-MID-20250411-115759-0000.jpg" alt="Royal Match"/>
+            <h3>Royal Match (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/merv3m" class="install-btn">install</a>
+        </div>
+
+        <div class="app-card">
+            <img src="https://i.postimg.cc/dQ8KtnCw/Votre-Texte-De-Paragraphe-MID-20250411-120031-0000.jpg" alt="Honor of Kings
+"/>
+            <h3>Honor of Kings (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/lk4d36" class="install-btn">install</a>
+        </div>
+
+        <div class="app-card">
+            <img src="https://i.postimg.cc/dVz3P1JM/super-smash-btros-ultimate-button-0001-1528851298611.jpg" alt="Super Smash Bros. Ultimate
+"/>
+            <h3>Super Smash Bros. Ultimate</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/podxk4" class="install-btn">install</a>
+        </div>
+
+        <div class="app-card">
+            <img src="https://i.postimg.cc/qvWmKHfY/Votre-Texte-De-Paragraphe-MID-20250411-121249-0000.jpg" alt="Last War:Survival"/>
+            <h3>Last War:Survival (MOD, Without ADS, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/qkvogw" class="install-btn">install</a>
+        </div>
+           <div class="app-card">
+            <img src="https://i.postimg.cc/90Z3CT70/Votre-Texte-De-Paragraphe-MID-20250422-021354-0000.jpg" alt="Madden NFL 25 Mobile Football "/>
+            <h3>Madden NFL 25 Mobile Football  (MOD, Unlimited Money)</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/7d6x89" class="install-btn">install</a>
     </div>
-
-    <!-- LIVE ACTIVITY FEED -->
-    <div class="activity-feed">
-        <div class="feed-header">
-            <div class="live-indicator">
-                LIVE <div class="live-dot"></div>
-            </div>
-            <div style="font-size: 0.7rem; color: #666;">ACTIVITY</div>
+                   <div class="app-card">
+            <img src="https://i.postimg.cc/vmwFrR8m/1741186657-limbo.png" alt="LIMBO"/>
+            <h3>LIMBO</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/ndl89k" class="install-btn">install</a>
         </div>
-        <div class="feed-list" id="feedList">
-            <!-- Feed items injected by JS -->
+           <div class="app-card">
+            <img src="https://i.postimg.cc/hGGDzW27/1752082124-subnautica.png" alt="Subnautica"/>
+            <h3>Subnautica</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/dv6dr6" class="install-btn">install</a>
         </div>
-    </div>
-
-    <!-- Result Modal -->
-    <div class="overlay" id="resultOverlay">
-        <div class="result-card" id="resultCard">
-            <h2 class="result-title" id="resultTitle">You Won</h2>
-            
-            <div class="result-image-container">
-                <img src="" alt="Reward" class="result-image" id="resultImage">
-                <!-- SKULL EMOJI -->
-                <div class="result-emoji" id="resultEmoji">💀</div>
-            </div>
-
-            <div class="result-name" id="resultName">Item Name</div>
-            
-            <!-- RESTORED INPUT -->
-            <div class="username-input-container" id="usernameInputContainer">
-                <input type="text" id="usernameInput" class="username-input" placeholder="ENTER ROBLOX USERNAME" maxlength="20">
-            </div>
-            
-            <button class="close-btn" id="closeBtn">CLAIM</button>
+           <div class="app-card">
+            <img src="https://i.postimg.cc/4yRR1rQP/icon-download-backyard-baseball-01.jpg" alt="Backyard Baseball"/>
+            <h3>Backyard Baseball '01</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/vonr39" class="install-btn">install</a>
         </div>
+         <div class="app-card">
+            <img src="https://i.postimg.cc/DwyszvMK/bullgtrhntyj.png" alt="Bully: Anniversary Edition"/>
+            <h3>Bully: Anniversary Edition</h3>
+            <p>Platforms: 🖥📱</p>
+            <a href="https://installchecker.com/cl/i/x6n491" class="install-btn">install</a>
+        </div>
+
+
     </div>
 
     <script>
-        // --- Configuration & Data ---
-        
-        const wheelData = [
-            { name: "Strawberry Elephant", type: "good", url: "https://i.postimg.cc/NMnXhZD0/Strawberryelephant.webp", weight: 30 },
-            { name: "Dragon Cannelloni", type: "good", url: "https://i.postimg.cc/D0bX75pk/Nah-uh.webp", weight: 30 },
-            { name: "Spaghetti Tualetti", type: "good", url: "https://i.postimg.cc/VvbCz4ZP/Spaghettitualetti.webp", weight: 30 },
-            { name: "Nothing (Cursed Miss)", type: "bad", emoji: "💀", weight: 10 } 
-        ];
+        const searchInput = document.getElementById("searchInput");
+        const appCards = document.querySelectorAll(".app-card");
+        const noResults = document.getElementById("no-results");
 
-        const fakeUsernames = ["SkibidiToilet", "SigmaGrind", "GrimaceShake", "FanumTax", "RizzGod", "MewingMaster", "BasedSigma", "NoobSlayer", "OhioKing", "GyattBoss"];
-        const itemNamesLower = {
-            "Strawberry Elephant": "a strawberry elephant",
-            "Dragon Cannelloni": "a dragon cannelloni",
-            "Spaghetti Tualetti": "a spaghetti tualetti",
-            "Nothing (Cursed Miss)": "nothing (cursed miss)"
-        };
+        searchInput.addEventListener("input", function () {
+            const query = this.value.trim().toLowerCase();
+            let hasResults = false;
 
-        const SEGMENT_COUNT = wheelData.length; // 4
-        const SEGMENT_ANGLE = 360 / SEGMENT_COUNT; // 90 degrees
-
-        // --- DOM Elements ---
-        const wheel = document.getElementById('wheel');
-        const spinBtn = document.getElementById('spinBtn');
-        const overlay = document.getElementById('resultOverlay');
-        const resultCard = document.getElementById('resultCard');
-        const resultTitle = document.getElementById('resultTitle');
-        const resultImage = document.getElementById('resultImage');
-        const resultEmoji = document.getElementById('resultEmoji');
-        const resultName = document.getElementById('resultName');
-        const closeBtn = document.getElementById('closeBtn');
-        const usernameInput = document.getElementById('usernameInput');
-        const usernameInputContainer = document.getElementById('usernameInputContainer');
-        const urgencyText = document.getElementById('urgency');
-        const feedList = document.getElementById('feedList');
-        const body = document.body;
-
-        // --- Initialization ---
-
-        let currentRotation = 0;
-        let isSpinning = false;
-
-        function initWheel() {
-            wheelData.forEach((item, index) => {
-                const angle = (index * SEGMENT_ANGLE) + (SEGMENT_ANGLE / 2);
-                
-                const wrapper = document.createElement('div');
-                wrapper.className = 'item-wrapper';
-                wrapper.setAttribute('data-type', item.type);
-                wrapper.style.transform = `rotate(${angle}deg)`;
-
-                const content = document.createElement('div');
-                content.className = 'item-content';
-
-                if (item.type === 'bad') {
-                    // SKULL EMOJI
-                    const iconContainer = document.createElement('div');
-                    iconContainer.className = 'item-icon';
-                    iconContainer.innerText = "💀"; 
-                    content.appendChild(iconContainer);
-                } else {
-                    const img = document.createElement('img');
-                    img.className = 'item-icon';
-                    img.src = item.url;
-                    img.alt = item.name;
-                    content.appendChild(img);
-                }
-                
-                wrapper.appendChild(content);
-                wheel.appendChild(wrapper);
+            appCards.forEach(card => {
+                const title = card.querySelector("h3").textContent.toLowerCase();
+                const match = title.includes(query);
+                card.style.display = match ? "block" : "none";
+                if (match) hasResults = true;
             });
 
-            const particleContainer = document.getElementById('particles');
-            for(let i=0; i<20; i++) {
-                let p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.width = Math.random() * 5 + 2 + 'px';
-                p.style.height = p.style.width;
-                p.style.animationDelay = Math.random() * 5 + 's';
-                p.style.animationDuration = Math.random() * 5 + 3 + 's';
-                particleContainer.appendChild(p);
-            }
-
-            startLiveFeed();
-        }
-
-        // --- Live Feed Logic ---
-
-        function addFeedItem(username, itemName, isLocal = false) {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'feed-item';
-            if (isLocal) itemDiv.classList.add('is-local');
-
-            const userSpan = document.createElement('span');
-            userSpan.className = 'feed-user';
-            userSpan.innerText = username;
-
-            const actionSpan = document.createElement('span');
-            actionSpan.className = 'feed-action';
-            
-            // Format: "won a strawberry elephant" or "received a..."
-            const verbs = ["won", "received", "claimed", "stole"];
-            const randomVerb = isLocal ? "won" : verbs[Math.floor(Math.random() * verbs.length)];
-            
-            actionSpan.innerText = ` ${randomVerb} ${itemName.toLowerCase()}`;
-
-            itemDiv.appendChild(userSpan);
-            itemDiv.appendChild(actionSpan);
-
-            feedList.insertBefore(itemDiv, feedList.firstChild);
-
-            // Cleanup old items (keep max 20)
-            if (feedList.children.length > 20) {
-                feedList.removeChild(feedList.lastChild);
-            }
-        }
-
-        function startLiveFeed() {
-            // Populate initial fake entries
-            for (let i = 0; i < 5; i++) {
-                const randomUser = fakeUsernames[Math.floor(Math.random() * fakeUsernames.length)];
-                const randomItem = wheelData[Math.floor(Math.random() * (wheelData.length - 1))]; 
-                const itemName = itemNamesLower[randomItem.name];
-                addFeedItem(randomUser, itemName);
-            }
-
-            // Add new fake entry every 3-6 seconds
-            setInterval(() => {
-                const randomUser = fakeUsernames[Math.floor(Math.random() * fakeUsernames.length)];
-                let itemKey = Math.floor(Math.random() * wheelData.length);
-                if (itemKey === 3) itemKey = Math.floor(Math.random() * 3); 
-                
-                const itemName = itemNamesLower[wheelData[itemKey].name];
-                addFeedItem(randomUser, itemName);
-            }, 4500);
-        }
-
-        // --- Core Game Logic ---
-
-        function getWeightedWinnerIndex() {
-            const totalWeight = wheelData.reduce((sum, item) => sum + item.weight, 0);
-            let random = Math.random() * totalWeight;
-            
-            for (let i = 0; i < wheelData.length; i++) {
-                if (random < wheelData[i].weight) {
-                    return i;
-                }
-                random -= wheelData[i].weight;
-            }
-            return 0; 
-        }
-
-        function spin() {
-            if (isSpinning) return;
-            isSpinning = true;
-            spinBtn.disabled = true;
-            urgencyText.style.opacity = 0; 
-
-            const winningIndex = getWeightedWinnerIndex();
-            const winningItem = wheelData[winningIndex];
-
-            const segmentCenter = (winningIndex * SEGMENT_ANGLE) + (SEGMENT_ANGLE / 2);
-            let targetAngle = 360 - segmentCenter;
-            
-            while(targetAngle < 0) targetAngle += 360;
-            targetAngle = targetAngle % 360;
-
-            let currentPosMod = currentRotation % 360;
-            let dist = targetAngle - currentPosMod;
-            
-            if (dist < 0) {
-                dist += 360;
-            }
-            
-            dist += (360 * 5); 
-            
-            currentRotation += dist;
-
-            // TRANSITION RESET
-            wheel.style.transition = 'none';
-            void wheel.offsetWidth; 
-            wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0, 0.25, 1)';
-            wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-            setTimeout(() => {
-                showResult(winningItem);
-            }, 4000); 
-        }
-
-        function showResult(item) {
-            setTimeout(() => {
-                resultCard.className = 'result-card';
-                overlay.classList.remove('dark-flash');
-                body.classList.remove('shake');
-                
-                // Reset Input State
-                usernameInput.value = '';
-                usernameInput.classList.remove('error');
-                closeBtn.disabled = false;
-
-                if (item.type === 'bad') {
-                    // --- LOSE STATE ---
-                    resultTitle.innerText = "CURSED MISS";
-                    resultTitle.style.color = "#888";
-                    resultName.innerText = item.name;
-                    
-                    // Show Skull, Hide Image
-                    resultImage.style.display = 'none';
-                    resultEmoji.style.display = 'flex'; 
-                    
-                    // HIDE INPUT
-                    usernameInputContainer.style.display = 'none';
-                    
-                    // BUTTON SAYS RETRY
-                    closeBtn.innerText = "RETRY";
-                    closeBtn.style.background = ""; // Reset to default
-                    closeBtn.style.borderColor = "";
-                    closeBtn.style.color = "";
-                    
-                    resultCard.classList.add('lose-style');
-                    body.classList.add('shake');
-                    overlay.classList.add('dark-flash');
-                } else {
-                    // --- WIN STATE ---
-                    resultTitle.innerText = "YOU WON";
-                    resultTitle.style.color = "#fff";
-                    resultName.innerText = item.name;
-                    
-                    resultImage.style.display = 'block';
-                    resultEmoji.style.display = 'none';
-                    resultImage.src = item.url;
-                    
-                    // SHOW INPUT
-                    usernameInputContainer.style.display = 'block';
-                    
-                    // BUTTON SAYS CLAIM
-                    closeBtn.innerText = "CLAIM";
-                    
-                    resultCard.classList.add('win-style');
-                }
-
-                overlay.classList.add('active');
-                isSpinning = false;
-                spinBtn.disabled = false;
-                urgencyText.style.opacity = 1; 
-
-                // Auto focus on input if visible
-                if (item.type !== 'bad') {
-                    setTimeout(() => {
-                        usernameInput.focus();
-                    }, 100);
-                }
-            }, 500);
-        }
-
-        function handleClaim() {
-            // Check if we are in Lose State (Button says RETRY)
-            if (closeBtn.innerText === "RETRY") {
-                closeOverlay();
-                return;
-            }
-
-            // We are in Win State (Button says CLAIM)
-            const username = usernameInput.value.trim();
-
-            if (!username) {
-                usernameInput.classList.add('error');
-                setTimeout(() => {
-                    usernameInput.classList.remove('error');
-                }, 300);
-                
-                resultCard.classList.add('shake');
-                setTimeout(() => resultCard.classList.remove('shake'), 500);
-                return;
-            }
-
-            // Success State
-            closeBtn.innerText = "CLAIMING...";
-            closeBtn.disabled = true;
-            
-            setTimeout(() => {
-                closeBtn.innerText = "CLAIMED!";
-                closeBtn.style.background = "#00ff00";
-                closeBtn.style.borderColor = "#00ff00";
-                closeBtn.style.color = "#000";
-                closeBtn.style.boxShadow = "0 0 20px #00ff00";
-
-                const currentItemName = resultName.innerText;
-                addFeedItem(username, currentItemName, true); 
-
-                // REDIRECT IMPLEMENTATION
-                // Redirect to the specific URL after claiming
-                window.location.href = 'https://plaiovagames.site/cl/i/veedqm';
-
-                // Note: The page will navigate immediately after this block executes.
-                // The modal close logic below usually fires after 800ms, but the redirect takes precedence.
-
-            }, 1000);
-        }
-
-        function closeOverlay() {
-            overlay.classList.remove('active');
-        }
-
-        // --- Event Listeners ---
-        spinBtn.addEventListener('click', spin);
-        usernameInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleClaim();
+            noResults.style.display = hasResults ? "none" : "block";
         });
-        closeBtn.addEventListener('click', handleClaim);
-
-        initWheel();
-
     </script>
+
 </body>
 </html>
+
