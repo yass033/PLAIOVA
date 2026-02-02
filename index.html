@@ -6,16 +6,7 @@
     <title>Emotes Generator</title>
     <link rel="icon" href="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png" type="image/png">
     <style>
-        /* LOCAL FONT IMPORT */
-        @font-face {
-            font-family: 'CustomFont';
-            src: url('font.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        /* Supercell Magic Font Import (Kept as fallback) */
+        /* Supercell Magic Font Import */
         @font-face {
             font-family: 'Supercell Magic';
             src: url('https://cdn.jsdelivr.net/gh/SamuelSantangelo/supercell-font@main/fonts/supercell-magic-webfont.woff2') format('woff2'),
@@ -40,8 +31,7 @@
         }
 
         body {
-            /* 'CustomFont' is now the priority, falling back to Supercell Magic, then system fonts */
-            font-family: 'CustomFont', 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
             background-color: var(--bg-dark);
@@ -138,7 +128,7 @@
         }
 
         .logo {
-            width: 200px; /* Reduced from 300px */
+            width: 300px;
             height: auto;
             margin: 0 auto 1rem;
             filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
@@ -146,12 +136,12 @@
 
         .title {
             color: var(--accent-yellow); /* Yellow Title */
-            font-size: 1.2rem; /* Made smaller */
+            font-size: 1.5rem;
             font-weight: bold;
             text-align: center;
             margin-bottom: 1rem;
-            -webkit-text-stroke: 2px #000; /* Black Stroke */
-            paint-order: stroke fill;
+            -webkit-text-stroke: 2px #000;
+            paint-order: stroke;
             text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
         }
 
@@ -164,13 +154,10 @@
 
         .status-card {
             background: rgba(20, 40, 20, 0.8);
-            padding: 0.8rem 1rem; /* Slightly smaller padding */
+            padding: 1rem;
             border-radius: 6px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(74, 222, 128, 0.3);
-            font-size: 0.85rem; /* Made text smaller */
-            -webkit-text-stroke: 1px black; /* Added Black Stroke */
-            paint-order: stroke fill;
         }
 
         .status-label {
@@ -237,7 +224,7 @@
             background: rgba(10, 30, 10, 0.9);
             border-radius: 6px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            font-size: 0.8rem; /* Smaller */
+            font-size: 0.875rem;
             width: 300px;
             transition: all 0.5s ease;
             z-index: 1000;
@@ -270,16 +257,10 @@
             font-weight: bold;
             margin-bottom: 0.25rem;
             color: #fff;
-            -webkit-text-stroke: 0.5px black; /* Black Stroke */
-            paint-order: stroke fill;
-            font-size: 0.9rem;
         }
 
         .notification-action {
             color: #a0a0a0;
-            -webkit-text-stroke: 0.5px black; /* Black Stroke */
-            paint-order: stroke fill;
-            font-size: 0.8rem;
         }
 
         /* Modal Styles */
@@ -333,8 +314,7 @@
         }
 
         .step input {
-            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
-            font-size: 14px; /* Smaller input text */
+            font-family: 'Supercell Magic', sans-serif;
             height: 2.5rem;
             width: 100%;
             border-radius: 6px;
@@ -417,33 +397,28 @@
         }
 
         .transferring-text {
-            font-size: 1rem; /* Smaller */
+            font-size: 1.1rem;
             font-weight: bold;
             color: #fff;
-            -webkit-text-stroke: 1px black; /* Black Stroke */
-            paint-order: stroke fill;
         }
 
         /* Main Green Button Style */
         .btn {
-            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
+            font-family: 'Supercell Magic', sans-serif;
             width: 100%;
-            padding: 10px 24px; /* Slightly smaller padding */
+            padding: 12px 24px;
             border: none;
             border-radius: 25px;
             background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
             color: white;
             font-weight: bold;
-            font-size: 14px; /* Made text smaller */
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow:
                 0 4px 8px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border: 2px solid #15803d;
-            -webkit-text-stroke: 0.5px black; /* Black Stroke */
-            paint-order: stroke fill;
-            text-shadow: 1px 1px 0px rgba(0,0,0,0.8); /* Extra shadow for legibility */
         }
 
         .btn:hover {
@@ -485,19 +460,12 @@
         }
 
         @media (max-width: 768px) {
-            .logo {
-                width: 180px; /* Even smaller on mobile */
-            }
             .title {
-                font-size: 1rem; /* Even smaller on mobile */
+                font-size: 1.25rem;
             }
             .status-container {
                 flex-direction: column;
                 align-items: center;
-            }
-            .status-card {
-                font-size: 0.75rem; /* Smaller on mobile */
-                padding: 0.5rem 0.8rem;
             }
             .items-grid {
                 gap: 1rem;
@@ -513,7 +481,6 @@
             .notification {
                 width: 280px;
                 right: 0.5rem;
-                font-size: 0.75rem;
             }
         }
     </style>
