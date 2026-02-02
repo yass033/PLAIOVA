@@ -3,10 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evolution Cards Generator</title>
-    <link rel="icon" href="https://i.postimg.cc/7hDLSjVY/Design-sans-titre-20251210-152310-0000.png" type="image/png">
+    <title>Emotes Generator</title>
+    <link rel="icon" href="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png" type="image/png">
     <style>
-        /* Supercell Magic Font Import */
+        /* LOCAL FONT IMPORT */
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('font.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Supercell Magic Font Import (Kept as fallback) */
         @font-face {
             font-family: 'Supercell Magic';
             src: url('https://cdn.jsdelivr.net/gh/SamuelSantangelo/supercell-font@main/fonts/supercell-magic-webfont.woff2') format('woff2'),
@@ -21,22 +30,36 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        :root {
+            --primary-green: #4ade80;       /* Bright Green */
+            --dark-green: #166534;          /* Deep Green */
+            --accent-yellow: #facc15;       /* Yellow */
+            --bg-dark: #020617;             /* Very dark green/black */
+            --card-bg: rgba(6, 40, 6, 0.7); /* Dark green card bg */
+        }
+
         body {
-            font-family: 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            /* 'CustomFont' is now the priority, falling back to Supercell Magic, then system fonts */
+            font-family: 'CustomFont', 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
-            background-color: #0a0a14; /* Dark base color */
+            background-color: var(--bg-dark);
+            color: white;
         }
+
         .background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at center, #1a0033 0%, #0a0a14 100%);
+            /* Dark Green Gradient Background */
+            background: radial-gradient(ellipse at center, #062c06 0%, #000000 100%);
             z-index: -10;
             overflow: hidden;
         }
+
         /* Vignette effect */
         .background::before {
             content: '';
@@ -45,39 +68,43 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(10, 10, 20, 0.8) 100%);
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
             z-index: 1;
             pointer-events: none;
         }
-        /* Energy lines */
+
+        /* Energy lines - Now Green */
         .energy-line {
             position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.2), transparent);
             height: 1px;
             width: 100%;
             opacity: 0.6;
             z-index: 0;
         }
-        /* Floating particles */
+
+        /* Floating particles - Now Green/Yellow */
         .particle {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(147, 51, 234, 0.4) 50%, transparent 70%);
-            box-shadow: 0 0 10px rgba(147, 51, 234, 0.6);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(74, 222, 128, 0.4) 50%, transparent 70%);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
             z-index: 0;
         }
-        /* Light shards */
+
+        /* Light shards - Now Green/Yellow */
         .light-shard {
             position: absolute;
             width: 0;
             height: 0;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-bottom: 30px solid rgba(255, 255, 255, 0.2);
-            filter: drop-shadow(0 0 6px rgba(147, 51, 234, 0.7));
+            border-bottom: 30px solid rgba(250, 204, 21, 0.2); /* Yellow tint */
+            filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.7));
             transform: rotate(45deg);
             z-index: 0;
         }
+
         .floating-icon {
             position: absolute;
             width: 170px;
@@ -90,62 +117,75 @@
             justify-content: center;
             z-index: 2;
         }
+
         .floating-icon img {
             width: 100px;
             height: 100px;
             object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.8));
+            filter: drop-shadow(0 0 15px rgba(74, 222, 128, 0.8));
         }
+
         .main-content {
             position: relative;
             z-index: 10;
         }
+
         .header {
             margin: 0 auto;
             width: fit-content;
             padding-top: 2rem;
             text-align: center;
         }
+
         .logo {
-            width: 300px;
+            width: 200px; /* Reduced from 300px */
             height: auto;
             margin: 0 auto 1rem;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
         }
+
         .title {
-            color: #ffd700;
-            font-size: 1.5rem;
-            font-weight: bold; /* Bold weight is part of the font's design */
+            color: var(--accent-yellow); /* Yellow Title */
+            font-size: 1.2rem; /* Made smaller */
+            font-weight: bold;
             text-align: center;
             margin-bottom: 1rem;
-            -webkit-text-stroke: 2px #000;
-            paint-order: stroke;
-            text-shadow: 0 0 10px rgba(147, 51, 234, 0.7);
+            -webkit-text-stroke: 2px #000; /* Black Stroke */
+            paint-order: stroke fill;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
         }
+
         .status-container {
             display: flex;
             gap: 1rem;
-            font-weight: bold; /* Using bold for status text */
+            font-weight: bold;
             justify-content: center;
         }
+
         .status-card {
-            background: rgba(20, 20, 40, 0.8);
-            padding: 1rem;
+            background: rgba(20, 40, 20, 0.8);
+            padding: 0.8rem 1rem; /* Slightly smaller padding */
             border-radius: 6px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(147, 51, 234, 0.3);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            font-size: 0.85rem; /* Made text smaller */
+            -webkit-text-stroke: 1px black; /* Added Black Stroke */
+            paint-order: stroke fill;
         }
+
         .status-label {
-            color: #9333ea; /* Purple color for status labels */
+            color: var(--primary-green);
         }
+
         .status-online {
-            color: #4ade80;
+            color: var(--accent-yellow);
         }
+
         .items-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 2rem;
+            gap: 1.5rem; 
             margin-top: 2.5rem;
             max-width: 1350px;
             margin-left: auto;
@@ -155,61 +195,69 @@
             padding-right: 1rem;
             list-style: none;
         }
+
         .item-card {
-            display: grid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 140px;
-            background: rgba(30, 30, 60, 0.7);
-            border-radius: 6px;
+            height: 140px; /* Square card */
+            background: var(--card-bg);
+            border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid rgba(147, 51, 234, 0.2);
+            border: 2px solid rgba(74, 222, 128, 0.3);
         }
+
         .item-card:hover {
-            background: rgba(40, 40, 80, 0.8);
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.4);
-            border-color: rgba(147, 51, 234, 0.5);
+            background: rgba(22, 101, 52, 0.8);
+            transform: scale(1.08);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+            border-color: var(--primary-green);
         }
+
         .item-image {
             width: 100%;
-            height: 140px;
-            object-fit: cover;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
         }
+
         .item-name {
-            text-align: center;
-            padding: 0.25rem;
-            background: rgba(20, 20, 40, 0.9);
-            font-weight: bold; /* Bold for card names */
-            font-size: 0.875rem;
-            color: #fff;
+            display: none; /* Hidden */
         }
+
         .notification {
             position: fixed;
             right: 1rem;
             bottom: 2rem;
-            background: rgba(20, 20, 40, 0.9);
+            background: rgba(10, 30, 10, 0.9);
             border-radius: 6px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            font-size: 0.875rem;
+            font-size: 0.8rem; /* Smaller */
             width: 300px;
             transition: all 0.5s ease;
             z-index: 1000;
             opacity: 1;
             transform: translateY(0);
-            border: 1px solid rgba(147, 51, 234, 0.3);
+            border: 1px solid rgba(74, 222, 128, 0.3);
         }
+
         .notification.fade-out {
             opacity: 0;
             transform: translateY(1rem);
         }
+
         .notification-content {
             padding: 1rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
+
         .notification-avatar {
             width: 40px;
             height: 40px;
@@ -217,14 +265,23 @@
             background: #d1d5db;
             object-fit: cover;
         }
+
         .notification-user {
-            font-weight: bold; /* Bold for notification user */
+            font-weight: bold;
             margin-bottom: 0.25rem;
             color: #fff;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            font-size: 0.9rem;
         }
+
         .notification-action {
             color: #a0a0a0;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            font-size: 0.8rem;
         }
+
         /* Modal Styles */
         .modal {
             position: fixed;
@@ -238,44 +295,68 @@
             align-items: center;
             justify-content: center;
         }
+
         .modal.show {
             display: flex;
         }
+
         .modal-content {
             width: min(400px, 90%);
             border-radius: 6px;
-            padding: 1.75rem;
-            background: linear-gradient(rgb(25, 25, 50), rgb(15, 15, 30));
-            border: 2px solid rgba(147, 51, 234, 0.4);
+            padding: 2rem 1.75rem;
+            background: linear-gradient(rgb(15, 40, 15), rgb(5, 20, 5));
+            border: 2px solid rgba(74, 222, 128, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .modal-logo {
-            width: 100%;
-            height: auto;
-            margin-bottom: 1rem;
+
+        /* Style for specific emote image in modal */
+        .modal-emote-img {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.6));
+            animation: float 3s ease-in-out infinite;
         }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
         .step {
             margin-bottom: 1rem;
+            width: 100%;
         }
+
         .step input {
-            font-family: 'Supercell Magic', sans-serif; /* Apply font to input */
+            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
+            font-size: 14px; /* Smaller input text */
             height: 2.5rem;
             width: 100%;
             border-radius: 6px;
             padding: 0 1rem;
             border: 1px solid #4a5568;
-            background-color: rgba(20, 20, 40, 0.8);
+            background-color: rgba(6, 30, 6, 0.8);
             color: #fff;
             outline: none;
         }
+
         .step input:focus {
-            border-color: #9333ea;
-            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.2);
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
         }
+
         .modal-buttons {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
+            width: 100%;
         }
+
         /* Transferring Modal Styles */
         .transferring-modal {
             position: fixed;
@@ -289,18 +370,21 @@
             align-items: center;
             justify-content: center;
         }
+
         .transferring-modal.show {
             display: flex;
         }
+
         .transferring-content {
             width: min(400px, 90%);
             border-radius: 6px;
             padding: 1.75rem;
-            background: linear-gradient(rgb(25, 25, 50), rgb(15, 15, 30));
+            background: linear-gradient(rgb(15, 40, 15), rgb(5, 20, 5));
             text-align: center;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(147, 51, 234, 0.4);
+            border: 2px solid rgba(74, 222, 128, 0.4);
         }
+
         .loading-animation {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -310,11 +394,13 @@
             margin: 0 auto 1.5rem;
             position: relative;
         }
+
         .loading-animation div {
-            background-color: #9333ea;
+            background-color: var(--primary-green);
             border-radius: 4px;
             animation: pulse 1.5s infinite ease-in-out;
         }
+
         .loading-animation div:nth-child(1) { animation-delay: 0s; }
         .loading-animation div:nth-child(2) { animation-delay: 0.1s; }
         .loading-animation div:nth-child(3) { animation-delay: 0.2s; }
@@ -324,46 +410,57 @@
         .loading-animation div:nth-child(7) { animation-delay: 0.6s; }
         .loading-animation div:nth-child(8) { animation-delay: 0.7s; }
         .loading-animation div:nth-child(9) { animation-delay: 0.8s; }
+
         @keyframes pulse {
             0%, 100% { opacity: 0.3; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1); }
         }
+
         .transferring-text {
-            font-size: 1.1rem;
-            font-weight: bold; /* Bold for transferring text */
+            font-size: 1rem; /* Smaller */
+            font-weight: bold;
             color: #fff;
+            -webkit-text-stroke: 1px black; /* Black Stroke */
+            paint-order: stroke fill;
         }
-        /* Game-style Purple Button */
+
+        /* Main Green Button Style */
         .btn {
-            font-family: 'Supercell Magic', sans-serif; /* Apply font to button */
+            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
             width: 100%;
-            padding: 12px 24px;
+            padding: 10px 24px; /* Slightly smaller padding */
             border: none;
             border-radius: 25px;
-            background: linear-gradient(180deg, #9333ea 0%, #7c3aed 50%, #6d28d9 100%);
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
             color: white;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px; /* Made text smaller */
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow:
                 0 4px 8px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border: 2px solid #6d28d9;
+            border: 2px solid #15803d;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.8); /* Extra shadow for legibility */
         }
+
         .btn:hover {
-            background: linear-gradient(180deg, #a855f7 0%, #9333ea 50%, #7c3aed 100%);
+            background: linear-gradient(180deg, #86efac 0%, #4ade80 50%, #22c55e 100%);
             transform: translateY(-2px);
             box-shadow:
                 0 6px 12px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
+
         .btn:active {
             transform: translateY(0);
             box-shadow:
                 0 2px 4px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
+
         /* Cancel button - grey variant */
         .btn.cancel {
             background: linear-gradient(180deg, #6c757d 0%, #868e96 50%, #6c757d 100%);
@@ -373,12 +470,12 @@
         .btn.cancel:hover {
             background: linear-gradient(180deg, #868e96 0%, #adb5bd 50%, #868e96 100%);
         }
-        /* Fallback styles for when images don't load */
+
         .image-fallback {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(147, 51, 234, 0.2);
+            background-color: rgba(74, 222, 128, 0.2);
             color: white;
             font-size: 12px;
             text-align: center;
@@ -386,20 +483,37 @@
             height: 100%;
             width: 100%;
         }
+
         @media (max-width: 768px) {
+            .logo {
+                width: 180px; /* Even smaller on mobile */
+            }
             .title {
-                font-size: 1.25rem;
+                font-size: 1rem; /* Even smaller on mobile */
             }
             .status-container {
                 flex-direction: column;
                 align-items: center;
             }
+            .status-card {
+                font-size: 0.75rem; /* Smaller on mobile */
+                padding: 0.5rem 0.8rem;
+            }
             .items-grid {
                 gap: 1rem;
+            }
+            .item-card {
+                width: 110px;
+                height: 110px;
+            }
+            .modal-emote-img {
+                width: 100px;
+                height: 100px;
             }
             .notification {
                 width: 280px;
                 right: 0.5rem;
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -426,8 +540,9 @@
     <div class="main-content">
         <!-- Header -->
         <div class="header">
-            <img class="logo" alt="Evolution Card Icon" src="https://i.postimg.cc/rpX8T2TY/Card-Evolution.webp">
-            <h2 class="title">Evolution Cards Generator</h2>
+            <!-- Updated to Clash Royale Logo -->
+            <img class="logo" alt="Clash Royale Logo" src="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png">
+            <h2 class="title">Emotes Generator</h2>
             <div class="status-container">
                 <div class="status-card">
                     <span class="status-label">Status:</span> <span class="status-online">Online</span>
@@ -458,12 +573,14 @@
     <!-- Modal -->
     <section class="modal" id="modal">
         <div class="modal-content">
-            <img class="modal-logo" alt="Evolution Card Icon" src="https://i.postimg.cc/rpX8T2TY/Card-Evolution.webp">
+            <!-- Dynamic Image for the Selected Emote -->
+            <img id="modalEmoteImage" class="modal-emote-img" alt="Selected Emote" src="">
+            
             <div class="step" id="step1">
                 <input class="username-input" placeholder="Enter Your Player Tag" type="text" id="usernameInput">
             </div>
             <div class="modal-buttons">
-                <button class="btn" id="actionBtn">Evolve Card</button>
+                <button class="btn" id="actionBtn">Generate Emote</button>
                 <button class="btn cancel" id="cancelBtn">Cancel</button>
             </div>
         </div>
@@ -478,72 +595,99 @@
                 <div></div><div></div><div></div>
             </div>
             <div class="transferring-text">
-                Generating <span id="transferringItemName">Shard</span>...
+                Generating <span id="transferringItemName">Emote</span>...
             </div>
         </div>
     </section>
 
     <script>
-        // Data for Clash Royale Evolution Cards
-        const items = [
-            { name: "Archers Evolution Shard", image: "https://i.postimg.cc/FFGwp5B5/Archers-Evo-Shard-(1).webp" },
-            { name: "Baby Dragon Evolution Shard", image: "https://i.postimg.cc/9FnK3P2q/Baby-Dragon-Evo-Shard.webp" },
-            { name: "Barbarians Evolution Shard", image: "https://i.postimg.cc/fW51Cngm/Barbarians-Evo-Shard-(1).webp" },
-            { name: "Bats Evolution Shard", image: "https://i.postimg.cc/SQVHdFtw/Bats-Evo-Shard-(1).webp" },
-            { name: "Bomber Evolution Shard", image: "https://i.postimg.cc/m2DJ6X05/Bomber-Evo-Shard-(1).webp" },
-            { name: "Cannon Evolution Shard", image: "https://i.postimg.cc/nczgwRyM/Cannon-Evo-Shard.webp" },
-            { name: "Dart Goblin Evolution Shard", image: "https://i.postimg.cc/qMRSZbP3/Dart-Goblin-Evo-Shard.webp" },
-            { name: "Electro Dragon Evolution Shard", image: "https://i.postimg.cc/MKTNrPCn/Electro-Dragon-Evo-Shard.webp" },
-            { name: "Battle Ram Evolution Shard", image: "https://i.postimg.cc/yYdtrQwM/Evolved-Battle-Ram-Evo-Shard.webp" },
-            { name: "Executioner Evolution Shard", image: "https://i.postimg.cc/CLQXyC0R/Executioner-Evo-Shard.webp" },
-            { name: "Firecracker Evolution Shard", image: "https://i.postimg.cc/bYL4gcFm/Firecracker-Evo-Shard-(1).webp" },
-            { name: "Furnace Evolution Shard", image: "https://i.postimg.cc/tCMw0dbZ/Furnace-Evo-Shard.webp" },
-            { name: "Giant Snowball Evolution Shard", image: "https://i.postimg.cc/65mgsVKQ/Giant-Snowball-Evo-Shard.webp" },
-            { name: "Goblin Cage Evolution Shard", image: "https://i.postimg.cc/Wb3CfWBp/Gobin-Cage-Evo-Shard.webp" },
-            { name: "Goblin Barrel Evolution Shard", image: "https://i.postimg.cc/gkJQBSCm/Goblin-Barrel-Evo-Shard.webp" },
-            { name: "Goblin Drill Evolution Shard", image: "https://i.postimg.cc/NfMSPJ3s/Goblin-Drill-Evo-Shard.webp" },
-            { name: "Goblin Giant Evolution Shard", image: "https://i.postimg.cc/7Y6dQsFy/Goblin-Giant-Evo-Shard.webp" },
-            { name: "Hunter Evolution Shard", image: "https://i.postimg.cc/m25Jx342/Hunter-Evo-Shard-(1).webp" },
-            { name: "Ice Spirit Evolution Shard", image: "https://i.postimg.cc/fW51CnrZ/Ice-Spirit-Evo-Shard-(1).webp" },
-            { name: "Inferno Dragon Evolution Shard", image: "https://i.postimg.cc/tCMw0dbY/Inferno-Dragon-Evo-Shard.webp" },
-            { name: "Knight Evolution Shard", image: "https://i.postimg.cc/1RMbBhY7/Knight-Evo-Shard-(1).webp" },
-            { name: "Lumberjack Evolution Shard", image: "https://i.postimg.cc/Wb3CfWBZ/Lumberjack-Evo-Shard.webp" },
-            { name: "Mega Knight Evolution Shard", image: "https://i.postimg.cc/Yq9Zyn50/Mega-Knight-Evo-Shard.webp" },
-            { name: "Mortar Evolution Shard", image: "https://i.postimg.cc/h4MNsW3r/Mortar-Evo-Shard-(1).webp" },
-            { name: "Musketeer Evolution Shard", image: "https://i.postimg.cc/02QFHWT6/Musketeer-Evo-Shard.webp" },
-            { name: "PEKKA Evolution Shard", image: "https://i.postimg.cc/sDXq06kD/PEKKAEvo-Shard.webp" },
-            { name: "Royal Ghost Evolution Shard", image: "https://i.postimg.cc/3JcVMjhv/Royal-Ghost-Evo-Shard.webp" },
-            { name: "Royal Giant Evolution Shard", image: "https://i.postimg.cc/Y28TRKyX/Royal-Giant-Evo-Shard-(1).webp" },
-            { name: "Royal Hogs Evolution Shard", image: "https://i.postimg.cc/fTrp47sm/Royal-Hogs-Evo-Shard.webp" },
-            { name: "Royal Recruits Evolution Shard", image: "https://i.postimg.cc/1RMbBhYj/Royal-Recruits-Evo-Shard-(1).webp" },
-            { name: "Skeleton Army Evolution Shard", image: "https://i.postimg.cc/zXc6mwNH/Skeleton-Army-Evo-Shard.webp" },
-            { name: "Skeleton Barrel Evolution Shard", image: "https://i.postimg.cc/ZKM2kPm9/Skeleton-Barrel-Evo-Shard.webp" },
-            { name: "Skeletons Evolution Shard", image: "https://i.postimg.cc/wxFn28b0/Skeletons-Evo-Shard-(1).webp" },
-            { name: "Tesla Evolution Shard", image: "https://i.postimg.cc/SNs3tTwP/Tesla-Evo-Shard.webp" },
-            { name: "Valkyrie Evolution Shard", image: "https://i.postimg.cc/8kwx4Q0S/Valkyrie-Evo-Shard-(1).webp" },
-            { name: "Wall Breakers Evolution Shard", image: "https://i.postimg.cc/vHBkSqpk/Wall-Breakers-Evo-Shard.webp" },
-            { name: "Witch Evolution Shard", image: "https://i.postimg.cc/FsB8tbvz/Witch-Evo-Shard.webp" },
-            { name: "Wizard Evolution Shard", image: "https://i.postimg.cc/zXB6PtsY/Wizard-Evo-Shard-(1).webp" },
-            { name: "Zap Evolution Shard", image: "https://i.postimg.cc/Prx9F3BB/Zap-Evo-Shard.webp" }
+        // Helper function to clean names from the URLs provided
+        function getNameFromUrl(url) {
+            if (!url) return "Emote";
+            const parts = url.split('/');
+            let filename = parts[parts.length - 1];
+            
+            // Remove extension and standard prefixes/suffixes
+            let name = filename.replace('.png', '')
+                               .replace('emotes-', '')
+                               .replace('-dl', '')
+                               .replace('-dl-fla', '')
+                               .replace('hero', '')
+                               // Replace specific compound names with cleaner versions
+                               .replace('heroknight', 'Knight')
+                               .replace('heromusketeer', 'Musketeer')
+                               .replace('herominipekka', 'Mini PEKKA')
+                               .replace('icegolemhero', 'Ice Golem')
+                               .replace('wizardhero', 'Wizard')
+                               // Handle numbered images
+                               .split('-');
+
+            // Capitalize words
+            name = name.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                       .join(' ');
+
+            if (name === '1' || name === '2' || name === '3' || name === '4' || name === '5') {
+                return "Secret Emote " + name;
+            }
+            if (name === 'Design Sans Titre') return "Mystery Emote";
+            
+            // Fix "Succes" to "Success"
+            if (name.includes('Succes')) return name.replace('Succes', 'Success');
+            
+            return name;
+        }
+
+        // Data for Clash Royale Emotes - REVERSED ORDER (24 to 1)
+        const rawUrls = [
+            "https://i.postimg.cc/SXV4Cm9B/24.png",
+            "https://i.postimg.cc/mcV4CT9q/23.png",
+            "https://i.postimg.cc/67zKnBZP/22.png",
+            "https://i.postimg.cc/kVwCK7Sc/21.png",
+            "https://i.postimg.cc/67zKnBZc/20.png",
+            "https://i.postimg.cc/PLdhCCC3/19.png",
+            "https://i.postimg.cc/hJKgXXXC/18.png",
+            "https://i.postimg.cc/Mczxnnnb/17.png",
+            "https://i.postimg.cc/069xzzzG/16.png",
+            "https://i.postimg.cc/LqmRJJJt/15.png",
+            "https://i.postimg.cc/3y37kkkm/14.png",
+            "https://i.postimg.cc/XZn3rrrX/13.png",
+            "https://i.postimg.cc/LqmRJJJ5/12.png",
+            "https://i.postimg.cc/7CqD5556/11.png",
+            "https://i.postimg.cc/XZn3rrr7/10.png",
+            "https://i.postimg.cc/ts3pR34J/9.png",
+            "https://i.postimg.cc/gxVmcV2r/8.png",
+            "https://i.postimg.cc/fVcDWcRJ/7.png",
+            "https://i.postimg.cc/qNs4BsvJ/6.png",
+            "https://i.postimg.cc/87RNkRzN/5.png",
+            "https://i.postimg.cc/pmfRVfL2/4.png",
+            "https://i.postimg.cc/zyC8DCGq/3.png",
+            "https://i.postimg.cc/qNs4Bsvf/2.png",
+            "https://i.postimg.cc/QBSD1j5L/1.png"
         ];
 
-        // Array of evolved character images for background animation
+        // Generate items array with clean names
+        const items = rawUrls.map(url => ({
+            name: getNameFromUrl(url),
+            image: url
+        }));
+
+        // Floating background icons - Using a selection of new images (High numbers first)
         const floatingIcons = [
-            "https://i.postimg.cc/T1yShhqp/Evolved-Archers-1.webp",
-            "https://i.postimg.cc/rsdbzzCr/Evolved-Hog.webp",
-            "https://i.postimg.cc/wMtP33cy/Evolved-Inferno-Dragon.webp",
-            "https://i.postimg.cc/yxJ5WWXD/Evolved-Knight-1.webp",
-            "https://i.postimg.cc/gjw5rrqk/Evolved-Royal-Recruit.webp",
-            "https://i.postimg.cc/Fzfq11gf/Evolved-Wizard-1.webp"
+            "https://i.postimg.cc/SXV4Cm9B/24.png",
+            "https://i.postimg.cc/kVwCK7Sc/21.png",
+            "https://i.postimg.cc/PLdhCCC3/19.png",
+            "https://i.postimg.cc/069xzzzG/16.png",
+            "https://i.postimg.cc/XZn3rrr7/10.png",
+            "https://i.postimg.cc/QBSD1j5L/1.png"
         ];
 
         const notificationsData = [
-            { user: "RoyalKing", action: "Just got Barbarians Shard!", avatar: "https://i.postimg.cc/ZKF1FwdH/5oaaz9.jpg" },
-            { user: "ClashMaster", action: "Found Skeletons Evolution!", avatar: "https://growgarden.dev/avatar/john.png" },
-            { user: "CardCollector", action: "Unlocked Knight Shard!", avatar: "https://i.postimg.cc/8zzndNDk/94060b112aa64a2cad30c3dcd253f155.jpg" },
-            { user: "ProPlayer99", action: "Evolved a Firecracker!", avatar: "https://i.postimg.cc/6pPzdZYz/3-0avatar.webp" },
-            { user: "CrownChaser", action: "Just got Electro Giant!", avatar: "https://i.postimg.cc/RVsTBf59/5e16f5d62d27adf87f3ba9d5d4dd0fbb.jpg" },
-            { user: "LavaLover", action: "Evolved Lava Hound!", avatar: "https://i.postimg.cc/5N0wn0Hr/e0c2685cf4573fcdae954f000c35faf6.jpg" }
+            { user: "RoyalKing", action: "Just got a Rare Emote!", avatar: "https://i.postimg.cc/ZKF1FwdH/5oaaz9.jpg" },
+            { user: "ClashMaster", action: "Found a Legendary Emote!", avatar: "https://growgarden.dev/avatar/john.png" },
+            { user: "EmoteCollector", action: "Unlocked a Special Emote!", avatar: "https://i.postimg.cc/8zzndNDk/94060b112aa64a2cad30c3dcd253f155.jpg" },
+            { user: "ProPlayer99", action: "Evolved a New Emote!", avatar: "https://i.postimg.cc/6pPzdZYz/3-0avatar.webp" },
+            { user: "CrownChaser", action: "Just got a Limited Emote!", avatar: "https://i.postimg.cc/RVsTBf59/5e16f5d62d27adf87f3ba9d5d4dd0fbb.jpg" },
+            { user: "LavaLover", action: "Unlocked a New Emote!", avatar: "https://i.postimg.cc/5N0wn0Hr/e0c2685cf4573fcdae954f000c35faf6.jpg" }
         ];
 
         // State variables
@@ -554,7 +698,7 @@
         let animationFrameId = null;
 
         // Online Users Counter variables
-        let currentOnlineUsers = 24531; // Initial value
+        let currentOnlineUsers = 24531;
         const minUsers = 24000;
         const maxUsers = 26000;
 
@@ -567,8 +711,8 @@
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime); 
+            oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.1);
 
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
@@ -592,6 +736,12 @@
         function showModal(item) {
             selectedItem = item;
             playClickSound();
+            
+            // Set modal image to specific clicked emote
+            const modalImg = document.getElementById('modalEmoteImage');
+            modalImg.src = item.image;
+            modalImg.alt = item.name;
+
             document.getElementById('modal').classList.add('show');
             document.body.style.overflow = 'hidden';
             resetModal();
@@ -606,7 +756,7 @@
         function resetModal() {
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('usernameInput').value = '';
-            document.getElementById('actionBtn').textContent = 'Evolve Card';
+            document.getElementById('actionBtn').textContent = 'Generate Emote';
             document.getElementById('actionBtn').disabled = false;
         }
 
@@ -617,7 +767,7 @@
             const actionBtn = document.getElementById('actionBtn');
 
             if (username) {
-                actionBtn.textContent = 'Evolving...';
+                actionBtn.textContent = 'Generating...';
                 actionBtn.disabled = true;
 
                 hideModal();
@@ -648,18 +798,18 @@
             items.forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'item-card';
+                // Only the image
                 li.innerHTML = `
                     <img alt="${item.name}" class="item-image" src="${item.image}">
-                    <p class="item-name">${item.name}</p>
                 `;
                 
-                // Add error handling for images
                 const img = li.querySelector('.item-image');
                 img.onerror = function() {
-                    handleImageError(this, item.name.split(' ')[0]);
+                    handleImageError(this, "Emote");
                 };
                 
                 li.addEventListener('click', () => showModal(item));
+                
                 grid.appendChild(li);
             });
         }
@@ -742,14 +892,13 @@
 
                 const img = document.createElement('img');
                 img.src = iconUrl;
-                img.alt = 'Floating Character';
+                img.alt = 'Floating Emote';
                 
-                // Add error handling for floating icons
                 img.onerror = function() {
                     this.style.display = 'none';
                     const fallback = document.createElement('div');
                     fallback.className = 'image-fallback';
-                    fallback.textContent = 'Icon';
+                    fallback.textContent = 'Emote';
                     element.appendChild(fallback);
                 };
                 
@@ -776,16 +925,13 @@
         function animateBackgroundElements() {
             backgroundElements.forEach(elementData => {
                 if (elementData.type === 'line') {
-                    // Animate energy lines with pulsing effect
                     elementData.animationPhase += elementData.animationSpeed;
                     const opacity = 0.1 + Math.sin(elementData.animationPhase) * 0.1;
                     elementData.element.style.opacity = opacity;
                 } else if (elementData.type === 'particle') {
-                    // Move particles slowly
                     elementData.x += Math.cos(elementData.direction) * elementData.speed;
                     elementData.y += Math.sin(elementData.direction) * elementData.speed;
                     
-                    // Wrap around screen
                     if (elementData.x < 0) elementData.x = window.innerWidth;
                     if (elementData.x > window.innerWidth) elementData.x = 0;
                     if (elementData.y < 0) elementData.y = window.innerHeight;
@@ -794,12 +940,10 @@
                     elementData.element.style.left = elementData.x + 'px';
                     elementData.element.style.top = elementData.y + 'px';
                 } else if (elementData.type === 'shard') {
-                    // Move and rotate shards
                     elementData.x += Math.cos(elementData.direction) * elementData.speed;
                     elementData.y += Math.sin(elementData.direction) * elementData.speed;
                     elementData.rotation += elementData.rotationSpeed;
                     
-                    // Wrap around screen
                     if (elementData.x < 0) elementData.x = window.innerWidth;
                     if (elementData.x > window.innerWidth) elementData.x = 0;
                     if (elementData.y < 0) elementData.y = window.innerHeight;
@@ -952,5 +1096,3 @@
     </script>
 </body>
 </html>
-
-
