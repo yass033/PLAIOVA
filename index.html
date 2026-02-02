@@ -3,1063 +3,706 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emotes Generator</title>
-    <link rel="icon" href="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png" type="image/png">
+    <title>Fish It - Lucky Catch Spin Event</title>
+    <!-- Importing playful, rounded fonts suitable for a Roblox aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Supercell Magic Font Import */
-        @font-face {
-            font-family: 'Supercell Magic';
-            src: url('https://cdn.jsdelivr.net/gh/SamuelSantangelo/supercell-font@main/fonts/supercell-magic-webfont.woff2') format('woff2'),
-                 url('https://cdn.jsdelivr.net/gh/SamuelSantangelo/supercell-font@main/fonts/supercell-magic-webfont.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-blue: #00a8ff;
+            --deep-sea: #00334e;
+            --ocean-gradient: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+            --water-bg: linear-gradient(180deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            --gold: #ffd700;
+            --orange: #ff9f43;
+            --purple: #5f27cd;
+            --white: #ffffff;
+            --text-dark: #2d3436;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --spin-wheel-size: 300px;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-green: #4ade80;       /* Bright Green */
-            --dark-green: #166534;          /* Deep Green */
-            --accent-yellow: #facc15;       /* Yellow */
-            --bg-dark: #020617;             /* Very dark green/black */
-            --card-bg: rgba(6, 40, 6, 0.7); /* Dark green card bg */
         }
 
         body {
-            font-family: 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            background: var(--water-bg);
+            color: var(--white);
             overflow-x: hidden;
-            background-color: var(--bg-dark);
-            color: white;
+            line-height: 1.6;
         }
 
-        .background {
+        h1, h2, h3, h4 {
+            font-family: 'Fredoka One', cursive;
+            letter-spacing: 0.5px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .bubbles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Dark Green Gradient Background */
-            background: radial-gradient(ellipse at center, #062c06 0%, #000000 100%);
-            z-index: -10;
+            z-index: -1;
+            pointer-events: none;
             overflow: hidden;
         }
-
-        /* Vignette effect */
-        .background::before {
-            content: '';
+        .bubble {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Energy lines - Now Green */
-        .energy-line {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.2), transparent);
-            height: 1px;
-            width: 100%;
-            opacity: 0.6;
-            z-index: 0;
-        }
-
-        /* Floating particles - Now Green/Yellow */
-        .particle {
-            position: absolute;
+            bottom: -20px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(74, 222, 128, 0.4) 50%, transparent 70%);
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
-            z-index: 0;
+            animation: rise 15s infinite ease-in;
+        }
+        @keyframes rise {
+            0% { bottom: -20px; transform: translateX(0); }
+            50% { transform: translateX(20px); }
+            100% { bottom: 110vh; transform: translateX(-20px); }
         }
 
-        /* Light shards - Now Green/Yellow */
-        .light-shard {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 30px solid rgba(250, 204, 21, 0.2); /* Yellow tint */
-            filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.7));
-            transform: rotate(45deg);
-            z-index: 0;
-        }
-
-        .floating-icon {
-            position: absolute;
-            width: 170px;
-            height: 170px;
-            opacity: 0.7;
-            transition: transform 0.2s ease;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .floating-icon img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(74, 222, 128, 0.8));
-        }
-
-        .main-content {
-            position: relative;
-            z-index: 10;
-        }
-
-        .header {
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            width: 90%;
+            max-width: 1200px;
             margin: 0 auto;
-            width: fit-content;
-            padding-top: 2rem;
+            padding: 0 1rem;
+        }
+
+        .section {
+            padding: 4rem 0;
             text-align: center;
+        }
+
+        /* --- HEADER / HERO --- */
+        header {
+            padding: 1.5rem 0;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
-            width: 300px;
-            height: auto;
-            margin: 0 auto 1rem;
-            filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
-        }
-
-        .title {
-            color: var(--accent-yellow); /* Yellow Title */
             font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 1rem;
-            -webkit-text-stroke: 2px #000;
-            paint-order: stroke;
-            text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
+            color: var(--white);
+            text-shadow: 2px 2px 0px var(--primary-blue);
         }
 
-        .status-container {
-            display: flex;
-            gap: 1rem;
-            font-weight: bold;
-            justify-content: center;
-        }
-
-        .status-card {
-            background: rgba(20, 40, 20, 0.8);
-            padding: 1rem;
-            border-radius: 6px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-
-        .status-label {
-            color: var(--primary-green);
-        }
-
-        .status-online {
-            color: var(--accent-yellow);
-        }
-
-        .items-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem; 
-            margin-top: 2.5rem;
-            max-width: 1350px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-bottom: 2.5rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            list-style: none;
-        }
-
-        .item-card {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 140px;
-            height: 140px; /* Square card */
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid rgba(74, 222, 128, 0.3);
-        }
-
-        .item-card:hover {
-            background: rgba(22, 101, 52, 0.8);
-            transform: scale(1.08);
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
-            border-color: var(--primary-green);
-        }
-
-        .item-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 10px;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .item-name {
-            display: none; /* Hidden */
-        }
-
-        .notification {
-            position: fixed;
-            right: 1rem;
-            bottom: 2rem;
-            background: rgba(10, 30, 10, 0.9);
-            border-radius: 6px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            font-size: 0.875rem;
-            width: 300px;
-            transition: all 0.5s ease;
-            z-index: 1000;
-            opacity: 1;
-            transform: translateY(0);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-
-        .notification.fade-out {
-            opacity: 0;
-            transform: translateY(1rem);
-        }
-
-        .notification-content {
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .notification-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #d1d5db;
-            object-fit: cover;
-        }
-
-        .notification-user {
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-            color: #fff;
-        }
-
-        .notification-action {
-            color: #a0a0a0;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 50;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            width: min(400px, 90%);
-            border-radius: 6px;
-            padding: 2rem 1.75rem;
-            background: linear-gradient(rgb(15, 40, 15), rgb(5, 20, 5));
-            border: 2px solid rgba(74, 222, 128, 0.4);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Style for specific emote image in modal */
-        .modal-emote-img {
-            width: 140px;
-            height: 140px;
-            object-fit: contain;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.6));
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .step {
-            margin-bottom: 1rem;
-            width: 100%;
-        }
-
-        .step input {
-            font-family: 'Supercell Magic', sans-serif;
-            height: 2.5rem;
-            width: 100%;
-            border-radius: 6px;
-            padding: 0 1rem;
-            border: 1px solid #4a5568;
-            background-color: rgba(6, 30, 6, 0.8);
-            color: #fff;
-            outline: none;
-        }
-
-        .step input:focus {
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            width: 100%;
-        }
-
-        /* Transferring Modal Styles */
-        .transferring-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 60;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .transferring-modal.show {
-            display: flex;
-        }
-
-        .transferring-content {
-            width: min(400px, 90%);
-            border-radius: 6px;
-            padding: 1.75rem;
-            background: linear-gradient(rgb(15, 40, 15), rgb(5, 20, 5));
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(74, 222, 128, 0.4);
-        }
-
-        .loading-animation {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 1.5rem;
+        .hero {
+            padding: 6rem 0 4rem;
             position: relative;
         }
 
-        .loading-animation div {
-            background-color: var(--primary-green);
-            border-radius: 4px;
-            animation: pulse 1.5s infinite ease-in-out;
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--gold);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .loading-animation div:nth-child(1) { animation-delay: 0s; }
-        .loading-animation div:nth-child(2) { animation-delay: 0.1s; }
-        .loading-animation div:nth-child(3) { animation-delay: 0.2s; }
-        .loading-animation div:nth-child(4) { animation-delay: 0.3s; }
-        .loading-animation div:nth-child(5) { animation-delay: 0.4s; }
-        .loading-animation div:nth-child(6) { animation-delay: 0.5s; }
-        .loading-animation div:nth-child(7) { animation-delay: 0.6s; }
-        .loading-animation div:nth-child(8) { animation-delay: 0.7s; }
-        .loading-animation div:nth-child(9) { animation-delay: 0.8s; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1); }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: #d1f4ff;
         }
 
-        .transferring-text {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #fff;
+        /* --- SPIN SECTION (Interactive) --- */
+        .spin-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            margin-bottom: 4rem;
+            position: relative;
         }
 
-        /* Main Green Button Style */
-        .btn {
-            font-family: 'Supercell Magic', sans-serif;
+        .wheel-container {
+            position: relative;
+            width: var(--spin-wheel-size);
+            height: var(--spin-wheel-size);
+            margin: 2rem auto;
+        }
+
+        /* The Wheel itself using Conic Gradient */
+        .wheel {
             width: 100%;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow:
-                0 4px 8px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border: 2px solid #15803d;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid var(--white);
+            background: conic-gradient(
+                #ff9f43 0% 25%,   /* Common */
+                #00a8ff 25% 50%,  /* Uncommon */
+                #5f27cd 50% 75%,  /* Rare */
+                #ffd700 75% 100%  /* Legendary */
+            );
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); /* Spin physics */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        .btn:hover {
-            background: linear-gradient(180deg, #86efac 0%, #4ade80 50%, #22c55e 100%);
-            transform: translateY(-2px);
-            box-shadow:
-                0 6px 12px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-            box-shadow:
-                0 2px 4px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        /* Cancel button - grey variant */
-        .btn.cancel {
-            background: linear-gradient(180deg, #6c757d 0%, #868e96 50%, #6c757d 100%);
-            color: white;
-            border: 2px solid #5a6268;
-        }
-        .btn.cancel:hover {
-            background: linear-gradient(180deg, #868e96 0%, #adb5bd 50%, #868e96 100%);
-        }
-
-        .image-fallback {
+        /* Inner circle to make it look like a donut */
+        .wheel::after {
+            content: "SPIN";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--white);
+            color: var(--deep-sea);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(74, 222, 128, 0.2);
-            color: white;
-            font-size: 12px;
-            text-align: center;
-            padding: 5px;
-            height: 100%;
-            width: 100%;
+            font-weight: 800;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 2;
         }
 
-        @media (max-width: 768px) {
-            .title {
-                font-size: 1.25rem;
+        /* The pointer arrow */
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid var(--white);
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .spin-btn {
+            background: var(--gold);
+            color: var(--deep-sea);
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.5rem;
+            font-family: 'Fredoka One', cursive;
+            border-radius: 50px;
+            box-shadow: 0 6px 0 #b39700, 0 10px 10px rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            margin-top: 1rem;
+        }
+
+        .spin-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b39700, 0 4px 4px rgba(0,0,0,0.3);
+        }
+
+        .spin-btn:disabled {
+            background: #ccc;
+            color: #666;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: translateY(4px);
+        }
+
+        /* Modal for Result */
+        .prize-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: var(--white);
+            color: var(--text-dark);
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            z-index: 20;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .prize-modal.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .prize-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .close-modal {
+            margin-top: 1rem;
+            background: var(--deep-sea);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+        }
+
+        /* --- REWARDS PREVIEW --- */
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .reward-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            padding: 1.5rem 1rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s;
+        }
+
+        .reward-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .reward-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reward-name {
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .reward-type {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Rarity Colors */
+        .rarity-common { color: #ff9f43; border-bottom: 3px solid #ff9f43; }
+        .rarity-uncommon { color: #00a8ff; border-bottom: 3px solid #00a8ff; }
+        .rarity-rare { color: #5f27cd; border-bottom: 3px solid #5f27cd; }
+        .rarity-legendary { color: #ffd700; border-bottom: 3px solid #ffd700; }
+
+        /* --- HOW IT WORKS --- */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            background: var(--white);
+            color: var(--text-dark);
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            background: var(--primary-blue);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* --- SOCIAL PROOF --- */
+        .social-feed {
+            background: rgba(0,0,0,0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Gradient mask for fading top and bottom */
+        .social-feed::before, .social-feed::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            z-index: 2;
+        }
+        .social-feed::before { top: 0; background: linear-gradient(to bottom, var(--water-bg), transparent); }
+        .social-feed::after { bottom: 0; background: linear-gradient(to top, var(--water-bg), transparent); }
+
+        .feed-list {
+            list-style: none;
+            animation: scrollUp 20s linear infinite;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .feed-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ccc;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .feed-text strong { color: var(--gold); }
+        .feed-text span { color: var(--primary-blue); font-weight: bold; }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
+        }
+
+        /* --- CTA FOOTER --- */
+        .cta-section {
+            padding: 6rem 0;
+            background: radial-gradient(circle at center, var(--primary-blue), var(--deep-sea));
+        }
+
+        .play-btn-large {
+            display: inline-block;
+            background: var(--white);
+            color: var(--primary-blue);
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            padding: 1rem 3rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+            margin-top: 1.5rem;
+        }
+
+        .play-btn-large:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (min-width: 768px) {
+            :root {
+                --spin-wheel-size: 400px;
             }
-            .status-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .items-grid {
-                gap: 1rem;
-            }
-            .item-card {
-                width: 110px;
-                height: 110px;
-            }
-            .modal-emote-img {
-                width: 100px;
-                height: 100px;
-            }
-            .notification {
-                width: 280px;
-                right: 0.5rem;
+            .hero h1 { font-size: 4rem; }
+            .steps-container {
+                flex-direction: row;
+                justify-content: center;
             }
         }
     </style>
-<link rel="me" href="https://www.blogger.com/profile/14096695004569788097" />
-<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
-<meta name='google-adsense-platform-domain' content='blogspot.com'/>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2P45G5VYDC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-2P45G5VYDC');
-</script>
 </head>
 <body>
-    <!-- Background -->
-    <div class="background" id="background">
-        <!-- Background elements will be added here by JavaScript -->
-    </div>
 
-    <!-- Main content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-            <!-- Updated to Clash Royale Logo -->
-            <img class="logo" alt="Clash Royale Logo" src="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png">
-            <h2 class="title">Emotes Generator</h2>
-            <div class="status-container">
-                <div class="status-card">
-                    <span class="status-label">Status:</span> <span class="status-online">Online</span>
+    <!-- Background Animation -->
+    <div class="bubbles" id="bubbles"></div>
+
+    <header>
+        <div class="container nav-content">
+            <div class="logo">🐟 Fish It</div>
+            <a href="#" class="play-btn-small" style="background:var(--white); color:var(--deep-sea); padding:0.5rem 1rem; border-radius:20px; font-weight:bold; font-size:0.8rem;">Play on Roblox</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. HERO SECTION -->
+        <section class="section hero">
+            <div class="container">
+                <h1>Lucky Catch Spin</h1>
+                <p>Cast your luck in our newest limited-time event! Relax, spin the wheel, and catch legendary gear to upgrade your fishing setup.</p>
+            </div>
+        </section>
+
+        <!-- 2. INTERACTIVE SPIN ELEMENT -->
+        <section class="section spin-section">
+            <div class="container">
+                <h2>Try Your Luck</h2>
+                <p>Spin the wheel to win exclusive bait, rods, and mythical fish!</p>
+                
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <div class="wheel" id="wheel"></div>
+                    
+                    <!-- Prize Result Modal -->
+                    <div class="prize-modal" id="prizeModal">
+                        <span class="prize-icon" id="modalIcon">🎉</span>
+                        <h3 id="modalTitle">You Won!</h3>
+                        <p id="modalText">A shiny new item.</p>
+                        <button class="close-modal" onclick="closeModal()">Awesome</button>
+                    </div>
                 </div>
-                <div class="status-card">
-                    <span class="status-label">Players Online:</span> <span class="status-online" id="onlineUsersCount">24,531</span>
+
+                <button class="spin-btn" id="spinBtn">SPIN NOW</button>
+            </div>
+        </section>
+
+        <!-- 3. REWARDS PREVIEW -->
+        <section class="section">
+            <div class="container">
+                <h2>What Can You Catch?</h2>
+                <div class="rewards-grid">
+                    <div class="reward-card">
+                        <span class="reward-icon">🪱</span>
+                        <span class="reward-name rarity-common">Super Bait x10</span>
+                        <span class="reward-type">Common</span>
+                    </div>
+                    <div class="reward-card">
+                        <span class="reward-icon">🎣</span>
+                        <span class="reward-name rarity-uncommon">Carbon Rod</span>
+                        <span class="reward-type">Uncommon</span>
+                    </div>
+                    <div class="reward-card">
+                        <span class="reward-icon">👢</span>
+                        <span class="reward-name rarity-rare">Golden Boot</span>
+                        <span class="reward-type">Rare</span>
+                    </div>
+                    <div class="reward-card">
+                        <span class="reward-icon">🦈</span>
+                        <span class="reward-name rarity-legendary">Mythical Shark</span>
+                        <span class="reward-type">Legendary</span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Items grid -->
-        <ul class="items-grid" id="itemsGrid">
-            <!-- Items will be populated by JavaScript -->
-        </ul>
-    </div>
+        <!-- 4. HOW IT WORKS -->
+        <section class="section" style="background: rgba(0,0,0,0.1);">
+            <div class="container">
+                <h2>How to Participate</h2>
+                <div class="steps-container">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h4>Log In Daily</h4>
+                            <p style="font-size: 0.9rem; color: #444;">Join the game to get your free spin ticket for the day.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h4>Spin & Win</h4>
+                            <p style="font-size: 0.9rem; color: #444;">Hit the button and cross your fingers for a legendary drop.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h4>Upgrade Gear</h4>
+                            <p style="font-size: 0.9rem; color: #444;">Use your rewards to catch bigger and rarer fish.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <div class="notification-content">
-            <img class="notification-avatar" id="notificationAvatar" src="/placeholder.svg" alt="Avatar">
-            <div>
-                <p class="notification-user" id="notificationUser"></p>
-                <p class="notification-action" id="notificationAction"></p>
+        <!-- 5. SOCIAL PROOF -->
+        <section class="section">
+            <div class="container">
+                <h2 style="margin-bottom: 1rem;">Recent Catches</h2>
+                <p style="font-size: 0.9rem; margin-bottom: 2rem; opacity: 0.8;">Live feed from the community</p>
+                
+                <div class="social-feed">
+                    <ul class="feed-list" id="feedList">
+                        <!-- JS populates this, but here is static fallback content -->
+                        <li class="feed-item">
+                            <img src="https://picsum.photos/seed/user1/32/32" alt="Avatar" class="feed-avatar">
+                            <div class="feed-text"><strong>FisherKing99</strong> caught a <span>Neon Tetra</span></div>
+                        </li>
+                        <li class="feed-item">
+                            <img src="https://picsum.photos/seed/user2/32/32" alt="Avatar" class="feed-avatar">
+                            <div class="feed-text"><strong>AquaGirl</strong> won <span>Super Bait</span></div>
+                        </li>
+                        <li class="feed-item">
+                            <img src="https://picsum.photos/seed/user3/32/32" alt="Avatar" class="feed-avatar">
+                            <div class="feed-text"><strong>SaltLife</strong> found a <span>Golden Boot</span></div>
+                        </li>
+                        <li class="feed-item">
+                            <img src="https://picsum.photos/seed/user4/32/32" alt="Avatar" class="feed-avatar">
+                            <div class="feed-text"><strong>DeepDiver</strong> upgraded to <span>Titanium Rod</span></div>
+                        </li>
+                        <li class="feed-item">
+                            <img src="https://picsum.photos/seed/user5/32/32" alt="Avatar" class="feed-avatar">
+                            <div class="feed-text"><strong>ChillVibes</strong> caught a <span>Mythical Shark</span></div>
+                        </li>
+                        <li class="feed-item">
+                            <img src="https://picsum.photos/seed/user6/32/32" alt="Avatar" class="feed-avatar">
+                            <div class="feed-text"><strong>OceanMan</strong> won <span>500 Coins</span></div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Modal -->
-    <section class="modal" id="modal">
-        <div class="modal-content">
-            <!-- Dynamic Image for the Selected Emote -->
-            <img id="modalEmoteImage" class="modal-emote-img" alt="Selected Emote" src="">
-            
-            <div class="step" id="step1">
-                <input class="username-input" placeholder="Enter Your Player Tag" type="text" id="usernameInput">
+        <!-- 6. FINAL CTA -->
+        <section class="section cta-section">
+            <div class="container">
+                <h2>Ready to Cast Your Line?</h2>
+                <p>The event is live for a limited time only.</p>
+                <a href="#" class="play-btn-large">▶ PLAY ON ROBLOX</a>
             </div>
-            <div class="modal-buttons">
-                <button class="btn" id="actionBtn">Generate Emote</button>
-                <button class="btn cancel" id="cancelBtn">Cancel</button>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Transferring Modal -->
-    <section class="transferring-modal" id="transferringModal">
-        <div class="transferring-content">
-            <div class="loading-animation">
-                <div></div><div></div><div></div>
-                <div></div><div></div><div></div>
-                <div></div><div></div><div></div>
-            </div>
-            <div class="transferring-text">
-                Generating <span id="transferringItemName">Emote</span>...
-            </div>
-        </div>
-    </section>
+    <footer>
+        <p>&copy; 2023 Fish It Fan Event. Not affiliated with Roblox Corporation.</p>
+    </footer>
 
     <script>
-        // Helper function to clean names from the URLs provided
-        function getNameFromUrl(url) {
-            if (!url) return "Emote";
-            const parts = url.split('/');
-            let filename = parts[parts.length - 1];
-            
-            // Remove extension and standard prefixes/suffixes
-            let name = filename.replace('.png', '')
-                               .replace('emotes-', '')
-                               .replace('-dl', '')
-                               .replace('-dl-fla', '')
-                               .replace('hero', '')
-                               // Replace specific compound names with cleaner versions
-                               .replace('heroknight', 'Knight')
-                               .replace('heromusketeer', 'Musketeer')
-                               .replace('herominipekka', 'Mini PEKKA')
-                               .replace('icegolemhero', 'Ice Golem')
-                               .replace('wizardhero', 'Wizard')
-                               // Handle numbered images
-                               .split('-');
-
-            // Capitalize words
-            name = name.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                       .join(' ');
-
-            if (name === '1' || name === '2' || name === '3' || name === '4' || name === '5') {
-                return "Secret Emote " + name;
-            }
-            if (name === 'Design Sans Titre') return "Mystery Emote";
-            
-            // Fix "Succes" to "Success"
-            if (name.includes('Succes')) return name.replace('Succes', 'Success');
-            
-            return name;
-        }
-
-        // Data for Clash Royale Emotes - REVERSED ORDER (24 to 1)
-        const rawUrls = [
-            "https://i.postimg.cc/SXV4Cm9B/24.png",
-            "https://i.postimg.cc/mcV4CT9q/23.png",
-            "https://i.postimg.cc/67zKnBZP/22.png",
-            "https://i.postimg.cc/kVwCK7Sc/21.png",
-            "https://i.postimg.cc/67zKnBZc/20.png",
-            "https://i.postimg.cc/PLdhCCC3/19.png",
-            "https://i.postimg.cc/hJKgXXXC/18.png",
-            "https://i.postimg.cc/Mczxnnnb/17.png",
-            "https://i.postimg.cc/069xzzzG/16.png",
-            "https://i.postimg.cc/LqmRJJJt/15.png",
-            "https://i.postimg.cc/3y37kkkm/14.png",
-            "https://i.postimg.cc/XZn3rrrX/13.png",
-            "https://i.postimg.cc/LqmRJJJ5/12.png",
-            "https://i.postimg.cc/7CqD5556/11.png",
-            "https://i.postimg.cc/XZn3rrr7/10.png",
-            "https://i.postimg.cc/ts3pR34J/9.png",
-            "https://i.postimg.cc/gxVmcV2r/8.png",
-            "https://i.postimg.cc/fVcDWcRJ/7.png",
-            "https://i.postimg.cc/qNs4BsvJ/6.png",
-            "https://i.postimg.cc/87RNkRzN/5.png",
-            "https://i.postimg.cc/pmfRVfL2/4.png",
-            "https://i.postimg.cc/zyC8DCGq/3.png",
-            "https://i.postimg.cc/qNs4Bsvf/2.png",
-            "https://i.postimg.cc/QBSD1j5L/1.png"
+        /* --- SPIN LOGIC --- */
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const modal = document.getElementById('prizeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalText = document.getElementById('modalText');
+        const modalIcon = document.getElementById('modalIcon');
+        
+        let isSpinning = false;
+        
+        // Define prizes and their rotation ranges (0-360 degrees)
+        // 0-25 = Common, 25-50 = Uncommon, 50-75 = Rare, 75-100 = Legendary
+        const prizes = [
+            { name: "Super Bait", type: "Common", icon: "🪱", color: "#ff9f43", range: [0, 25] },
+            { name: "Carbon Rod", type: "Uncommon", icon: "🎣", color: "#00a8ff", range: [25, 50] },
+            { name: "Golden Boot", type: "Rare", icon: "👢", color: "#5f27cd", range: [50, 75] },
+            { name: "Mythical Shark", type: "Legendary", icon: "🦈", color: "#ffd700", range: [75, 100] }
         ];
 
-        // Generate items array with clean names
-        const items = rawUrls.map(url => ({
-            name: getNameFromUrl(url),
-            image: url
-        }));
+        spinBtn.addEventListener('click', () => {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinBtn.disabled = true;
 
-        // Floating background icons - Using a selection of new images (High numbers first)
-        const floatingIcons = [
-            "https://i.postimg.cc/SXV4Cm9B/24.png",
-            "https://i.postimg.cc/kVwCK7Sc/21.png",
-            "https://i.postimg.cc/PLdhCCC3/19.png",
-            "https://i.postimg.cc/069xzzzG/16.png",
-            "https://i.postimg.cc/XZn3rrr7/10.png",
-            "https://i.postimg.cc/QBSD1j5L/1.png"
-        ];
-
-        const notificationsData = [
-            { user: "RoyalKing", action: "Just got a Rare Emote!", avatar: "https://i.postimg.cc/ZKF1FwdH/5oaaz9.jpg" },
-            { user: "ClashMaster", action: "Found a Legendary Emote!", avatar: "https://growgarden.dev/avatar/john.png" },
-            { user: "EmoteCollector", action: "Unlocked a Special Emote!", avatar: "https://i.postimg.cc/8zzndNDk/94060b112aa64a2cad30c3dcd253f155.jpg" },
-            { user: "ProPlayer99", action: "Evolved a New Emote!", avatar: "https://i.postimg.cc/6pPzdZYz/3-0avatar.webp" },
-            { user: "CrownChaser", action: "Just got a Limited Emote!", avatar: "https://i.postimg.cc/RVsTBf59/5e16f5d62d27adf87f3ba9d5d4dd0fbb.jpg" },
-            { user: "LavaLover", action: "Unlocked a New Emote!", avatar: "https://i.postimg.cc/5N0wn0Hr/e0c2685cf4573fcdae954f000c35faf6.jpg" }
-        ];
-
-        // State variables
-        let floatingElements = [];
-        let backgroundElements = [];
-        let currentNotificationIndex = 0;
-        let selectedItem = null;
-        let animationFrameId = null;
-
-        // Online Users Counter variables
-        let currentOnlineUsers = 24531;
-        const minUsers = 24000;
-        const maxUsers = 26000;
-
-        // Sound effect function
-        function playClickSound() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.frequency.setValueAtTime(600, audioContext.currentTime); 
-            oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.1);
-
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.1);
-        }
-
-        // Transferring modal functions
-        function showTransferringModal(itemName) {
-            document.getElementById('transferringItemName').textContent = itemName;
-            document.getElementById('transferringModal').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideTransferringModal() {
-            document.getElementById('transferringModal').classList.remove('show');
-        }
-
-        // Modal functions
-        function showModal(item) {
-            selectedItem = item;
-            playClickSound();
+            // Calculate a random degree
+            // Minimum 5 full spins (1800 degrees) + random landing
+            const randomDegree = Math.floor(Math.random() * 360);
+            const totalSpin = 1800 + randomDegree;
             
-            // Set modal image to specific clicked emote
-            const modalImg = document.getElementById('modalEmoteImage');
-            modalImg.src = item.image;
-            modalImg.alt = item.name;
+            // Apply rotation
+            wheel.style.transform = `rotate(${totalSpin}deg)`;
 
-            document.getElementById('modal').classList.add('show');
-            document.body.style.overflow = 'hidden';
-            resetModal();
-        }
-
-        function hideModal() {
-            document.getElementById('modal').classList.remove('show');
-            document.body.style.overflow = 'auto';
-            resetModal();
-        }
-
-        function resetModal() {
-            document.getElementById('step1').classList.remove('hidden');
-            document.getElementById('usernameInput').value = '';
-            document.getElementById('actionBtn').textContent = 'Generate Emote';
-            document.getElementById('actionBtn').disabled = false;
-        }
-
-        function actionStep() {
-            playClickSound();
-            const usernameInput = document.getElementById('usernameInput');
-            const username = usernameInput.value.trim();
-            const actionBtn = document.getElementById('actionBtn');
-
-            if (username) {
-                actionBtn.textContent = 'Generating...';
-                actionBtn.disabled = true;
-
-                hideModal();
-                showTransferringModal(selectedItem.name);
-
-                setTimeout(() => {
-                    hideTransferringModal();
-                    resetModal();
-                    window.location.href = 'https://plaiovagames.site/cl/i/podxr5';
-                }, 2000);
-            } else {
-                alert('Please enter your Player Tag.');
-            }
-        }
-
-        // Function to handle image loading errors
-        function handleImageError(img, fallbackText) {
-            img.style.display = 'none';
-            const fallback = document.createElement('div');
-            fallback.className = 'image-fallback';
-            fallback.textContent = fallbackText;
-            img.parentNode.appendChild(fallback);
-        }
-
-        // Initialize items grid
-        function initializeItemsGrid() {
-            const grid = document.getElementById('itemsGrid');
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'item-card';
-                // Only the image
-                li.innerHTML = `
-                    <img alt="${item.name}" class="item-image" src="${item.image}">
-                `;
-                
-                const img = li.querySelector('.item-image');
-                img.onerror = function() {
-                    handleImageError(this, "Emote");
-                };
-                
-                li.addEventListener('click', () => showModal(item));
-                
-                grid.appendChild(li);
-            });
-        }
-
-        // Initialize mystical background elements
-        function initializeBackgroundElements() {
-            const background = document.getElementById('background');
-            
-            // Create energy lines
-            for (let i = 0; i < 5; i++) {
-                const line = document.createElement('div');
-                line.className = 'energy-line';
-                line.style.top = `${20 + i * 20}%`;
-                line.style.width = `${50 + Math.random() * 50}%`;
-                line.style.left = `${Math.random() * 50}%`;
-                line.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
-                line.style.opacity = 0.1 + Math.random() * 0.2;
-                background.appendChild(line);
-                
-                backgroundElements.push({
-                    element: line,
-                    type: 'line',
-                    animationSpeed: 0.1 + Math.random() * 0.3,
-                    animationPhase: Math.random() * Math.PI * 2
-                });
-            }
-            
-            // Create light particles
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = 2 + Math.random() * 4;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                particle.style.opacity = 0.2 + Math.random() * 0.5;
-                background.appendChild(particle);
-                
-                backgroundElements.push({
-                    element: particle,
-                    type: 'particle',
-                    x: Math.random() * window.innerWidth,
-                    y: Math.random() * window.innerHeight,
-                    speed: 0.2 + Math.random() * 0.5,
-                    direction: Math.random() * Math.PI * 2,
-                    size: size
-                });
-            }
-            
-            // Create light shards
-            for (let i = 0; i < 10; i++) {
-                const shard = document.createElement('div');
-                shard.className = 'light-shard';
-                shard.style.left = `${Math.random() * 100}%`;
-                shard.style.top = `${Math.random() * 100}%`;
-                shard.style.opacity = 0.1 + Math.random() * 0.3;
-                shard.style.transform = `rotate(${Math.random() * 360}deg)`;
-                background.appendChild(shard);
-                
-                backgroundElements.push({
-                    element: shard,
-                    type: 'shard',
-                    x: Math.random() * window.innerWidth,
-                    y: Math.random() * window.innerHeight,
-                    speed: 0.1 + Math.random() * 0.3,
-                    direction: Math.random() * Math.PI * 2,
-                    rotation: Math.random() * 360,
-                    rotationSpeed: Math.random() * 2 - 1
-                });
-            }
-        }
-
-        // Initialize floating icons
-        function initializeFloatingIcons() {
-            const background = document.getElementById('background');
-            floatingIcons.forEach((iconUrl, index) => {
-                const element = document.createElement('div');
-                element.className = 'floating-icon';
-
-                const img = document.createElement('img');
-                img.src = iconUrl;
-                img.alt = 'Floating Emote';
-                
-                img.onerror = function() {
-                    this.style.display = 'none';
-                    const fallback = document.createElement('div');
-                    fallback.className = 'image-fallback';
-                    fallback.textContent = 'Emote';
-                    element.appendChild(fallback);
-                };
-                
-                element.appendChild(img);
-
-                const floatingData = {
-                    id: index,
-                    element: element,
-                    x: Math.random() * (window.innerWidth - 170),
-                    y: Math.random() * (window.innerHeight - 170),
-                    speed: 0.5 + Math.random() * 1,
-                    direction: Math.random() * Math.PI * 2
-                };
-
-                element.style.left = floatingData.x + 'px';
-                element.style.top = floatingData.y + 'px';
-
-                floatingElements.push(floatingData);
-                background.appendChild(element);
-            });
-        }
-
-        // Animate background elements
-        function animateBackgroundElements() {
-            backgroundElements.forEach(elementData => {
-                if (elementData.type === 'line') {
-                    elementData.animationPhase += elementData.animationSpeed;
-                    const opacity = 0.1 + Math.sin(elementData.animationPhase) * 0.1;
-                    elementData.element.style.opacity = opacity;
-                } else if (elementData.type === 'particle') {
-                    elementData.x += Math.cos(elementData.direction) * elementData.speed;
-                    elementData.y += Math.sin(elementData.direction) * elementData.speed;
-                    
-                    if (elementData.x < 0) elementData.x = window.innerWidth;
-                    if (elementData.x > window.innerWidth) elementData.x = 0;
-                    if (elementData.y < 0) elementData.y = window.innerHeight;
-                    if (elementData.y > window.innerHeight) elementData.y = 0;
-                    
-                    elementData.element.style.left = elementData.x + 'px';
-                    elementData.element.style.top = elementData.y + 'px';
-                } else if (elementData.type === 'shard') {
-                    elementData.x += Math.cos(elementData.direction) * elementData.speed;
-                    elementData.y += Math.sin(elementData.direction) * elementData.speed;
-                    elementData.rotation += elementData.rotationSpeed;
-                    
-                    if (elementData.x < 0) elementData.x = window.innerWidth;
-                    if (elementData.x > window.innerWidth) elementData.x = 0;
-                    if (elementData.y < 0) elementData.y = window.innerHeight;
-                    if (elementData.y > window.innerHeight) elementData.y = 0;
-                    
-                    elementData.element.style.left = elementData.x + 'px';
-                    elementData.element.style.top = elementData.y + 'px';
-                    elementData.element.style.transform = `rotate(${elementData.rotation}deg)`;
-                }
-            });
-        }
-
-        // Animate floating icons
-        function animateFloatingIcons() {
-            floatingElements.forEach(elementData => {
-                let newX = elementData.x + Math.cos(elementData.direction) * elementData.speed;
-                let newY = elementData.y + Math.sin(elementData.direction) * elementData.speed;
-                let newDirection = elementData.direction;
-
-                if (newX <= 0 || newX >= window.innerWidth - 170) {
-                    newDirection = Math.PI - elementData.direction;
-                    newX = Math.max(0, Math.min(newX, window.innerWidth - 170));
-                }
-                if (newY <= 0 || newY >= window.innerHeight - 170) {
-                    newDirection = -elementData.direction;
-                    newY = Math.max(0, Math.min(newY, window.innerHeight - 170));
-                }
-
-                elementData.x = newX;
-                elementData.y = newY;
-                elementData.direction = newDirection;
-
-                elementData.element.style.left = newX + 'px';
-                elementData.element.style.top = newY + 'px';
-            });
-        }
-
-        // Notification update logic
-        function updateNotification() {
-            const notification = document.getElementById('notification');
-            const user = document.getElementById('notificationUser');
-            const action = document.getElementById('notificationAction');
-            const avatar = document.getElementById('notificationAvatar');
-
-            notification.classList.add('fade-out');
-
+            // Wait for spin to finish (4 seconds as defined in CSS)
             setTimeout(() => {
-                currentNotificationIndex = (currentNotificationIndex + 1) % notificationsData.length;
-                const current = notificationsData[currentNotificationIndex];
+                determinePrize(randomDegree);
+                isSpinning = false;
+                spinBtn.disabled = false;
+            }, 4000);
+        });
 
-                user.textContent = current.user;
-                action.textContent = current.action;
-                avatar.src = current.avatar;
-
-                notification.classList.remove('fade-out');
-            }, 500);
-        }
-
-        // Function to animate online users count
-        function animateOnlineUsersCount(start, end, duration) {
-            const range = end - start;
-            const startTime = performance.now();
-            const onlineUsersElement = document.getElementById('onlineUsersCount');
-
-            function step(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-
-                const animatedValue = start + (range * progress);
-                onlineUsersElement.textContent = Math.floor(animatedValue).toLocaleString();
-
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    onlineUsersElement.textContent = end.toLocaleString();
-                    currentOnlineUsers = end;
-                }
-            }
-            requestAnimationFrame(step);
-        }
-
-        // Function to update online users count with a new random target
-        function updateOnlineUsers() {
-            const targetUsers = Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
-            animateOnlineUsersCount(currentOnlineUsers, targetUsers, 1500);
-        }
-
-        // Initialize everything
-        function init() {
-            initializeItemsGrid();
-            initializeBackgroundElements();
-            initializeFloatingIcons();
-
-            const notificationUser = document.getElementById('notificationUser');
-            const notificationAction = document.getElementById('notificationAction');
-            const notificationAvatar = document.getElementById('notificationAvatar');
-            const initialNotification = notificationsData[0];
-            notificationUser.textContent = initialNotification.user;
-            notificationAction.textContent = initialNotification.action;
-            notificationAvatar.src = initialNotification.avatar;
-
-            document.getElementById('onlineUsersCount').textContent = currentOnlineUsers.toLocaleString();
-
-            // Start animations
-            function animate() {
-                animateBackgroundElements();
-                animateFloatingIcons();
-                animationFrameId = requestAnimationFrame(animate);
-            }
-            animate();
+        function determinePrize(degree) {
+            // Normalize degree to 0-360
+            const normalizedDegree = degree % 360;
             
-            setInterval(updateNotification, 4000);
-            setInterval(updateOnlineUsers, 6000);
+            // The pointer is at the TOP (0 degrees visually), but rotation is clockwise.
+            // To find what segment is at the top, we need to do a bit of geometry calculation.
+            // A simplified logic for this demo:
+            // If we rotate 90 degrees, the 270 degree mark (or 3rd quadrant) hits the top.
+            // Effectively: (360 - normalizedDegree) gives the value at the top.
+            
+            let valueAtTop = (360 - normalizedDegree) % 360;
+            if(valueAtTop === 0) valueAtTop = 360; // handle edge case
+
+            // Find matching prize range (0-100 scale based on 4 segments)
+            // 0-90 = Seg 4 (Legendary), 90-180 = Seg 1 (Common), etc.
+            // Let's simplify logic based on the conic gradient definition:
+            // 0-25deg (Common), 25-50 (Uncommon), 50-75 (Rare), 75-100 (Legendary)
+            // Note: CSS conic gradient starts at 12 o'clock and goes clockwise.
+            // So if we rotate 10 degrees clockwise, the 350 degree mark is at top.
+            
+            // Let's map 0-100 percentage for simplicity
+            const percentage = (valueAtTop / 360) * 100;
+            
+            let wonPrize = prizes[0]; // Default to common
+
+            if (percentage >= 0 && percentage < 25) {
+                wonPrize = prizes[0]; // Common
+            } else if (percentage >= 25 && percentage < 50) {
+                wonPrize = prizes[1]; // Uncommon
+            } else if (percentage >= 50 && percentage < 75) {
+                wonPrize = prizes[2]; // Rare
+            } else {
+                wonPrize = prizes[3]; // Legendary
+            }
+
+            showModal(wonPrize);
         }
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('actionBtn').addEventListener('click', actionStep);
-            document.getElementById('cancelBtn').addEventListener('click', () => {
-                playClickSound();
-                hideModal();
-            });
+        function showModal(prize) {
+            modalTitle.innerText = "You Won!";
+            modalTitle.style.color = prize.color;
+            modalIcon.innerText = prize.icon;
+            modalText.innerText = `${prize.name} (${prize.type})`;
+            modal.classList.add('active');
+        }
 
-            document.getElementById('modal').addEventListener('click', (e) => {
-                if (e.target.id === 'modal') {
-                    hideModal();
-                }
-            });
+        function closeModal() {
+            modal.classList.remove('active');
+        }
 
-            document.getElementById('transferringModal').addEventListener('click', (e) => {
-                if (e.target.classList.contains('transferring-modal')) {
-                    hideTransferringModal();
-                }
-            });
+        /* --- BACKGROUND BUBBLES GENERATOR --- */
+        function createBubbles() {
+            const container = document.getElementById('bubbles');
+            const bubbleCount = 20;
 
-            init();
-        });
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Randomize size, position, and animation duration
+                const size = Math.random() * 40 + 10 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = Math.random() * 10 + 10 + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(bubble);
+            }
+        }
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            floatingElements.forEach(elementData => {
-                elementData.x = Math.min(elementData.x, window.innerWidth - 170);
-                elementData.y = Math.min(elementData.y, window.innerHeight - 170);
-                if (elementData.element) {
-                    elementData.element.style.left = elementData.x + 'px';
-                    elementData.element.style.top = elementData.y + 'px';
-                }
-            });
-        });
+        createBubbles();
     </script>
 </body>
 </html>
