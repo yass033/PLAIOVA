@@ -1,282 +1,1098 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotes Generator</title>
+    <link rel="icon" href="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png" type="image/png">
+    <style>
+        /* LOCAL FONT IMPORT */
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('font.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Supercell Magic Font Import (Kept as fallback) */
+        @font-face {
+            font-family: 'Supercell Magic';
+            src: url('https://cdn.jsdelivr.net/gh/SamuelSantangelo/supercell-font@main/fonts/supercell-magic-webfont.woff2') format('woff2'),
+                 url('https://cdn.jsdelivr.net/gh/SamuelSantangelo/supercell-font@main/fonts/supercell-magic-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #4ade80;       /* Bright Green */
+            --dark-green: #166534;          /* Deep Green */
+            --accent-yellow: #facc15;       /* Yellow */
+            --bg-dark: #020617;             /* Very dark green/black */
+            --card-bg: rgba(6, 40, 6, 0.7); /* Dark green card bg */
+        }
+
+        body {
+            /* 'CustomFont' is now the priority, falling back to Supercell Magic, then system fonts */
+            font-family: 'CustomFont', 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: var(--bg-dark);
+            color: white;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Dark Green Gradient Background */
+            background: radial-gradient(ellipse at center, #062c06 0%, #000000 100%);
+            z-index: -10;
+            overflow: hidden;
+        }
+
+        /* Vignette effect */
+        .background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Energy lines - Now Green */
+        .energy-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.2), transparent);
+            height: 1px;
+            width: 100%;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        /* Floating particles - Now Green/Yellow */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(74, 222, 128, 0.4) 50%, transparent 70%);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
+            z-index: 0;
+        }
+
+        /* Light shards - Now Green/Yellow */
+        .light-shard {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 30px solid rgba(250, 204, 21, 0.2); /* Yellow tint */
+            filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.7));
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        .floating-icon {
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            opacity: 0.7;
+            transition: transform 0.2s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .floating-icon img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(74, 222, 128, 0.8));
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            margin: 0 auto;
+            width: fit-content;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .logo {
+            width: 200px; /* Reduced from 300px */
+            height: auto;
+            margin: 0 auto 1rem;
+            filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
+        }
+
+        .title {
+            color: var(--accent-yellow); /* Yellow Title */
+            font-size: 1.2rem; /* Made smaller */
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            -webkit-text-stroke: 2px #000; /* Black Stroke */
+            paint-order: stroke fill;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
+        }
+
+        .status-container {
+            display: flex;
+            gap: 1rem;
+            font-weight: bold;
+            justify-content: center;
+        }
+
+        .status-card {
+            background: rgba(20, 40, 20, 0.8);
+            padding: 0.8rem 1rem; /* Slightly smaller padding */
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            font-size: 0.85rem; /* Made text smaller */
+            -webkit-text-stroke: 1px black; /* Added Black Stroke */
+            paint-order: stroke fill;
+        }
+
+        .status-label {
+            color: var(--primary-green);
+        }
+
+        .status-online {
+            color: var(--accent-yellow);
+        }
+
+        .items-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem; 
+            margin-top: 2.5rem;
+            max-width: 1350px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 2.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            list-style: none;
+        }
+
+        .item-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 140px; /* Square card */
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .item-card:hover {
+            background: rgba(22, 101, 52, 0.8);
+            transform: scale(1.08);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+            border-color: var(--primary-green);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .item-name {
+            display: none; /* Hidden */
+        }
+
+        .notification {
+            position: fixed;
+            right: 1rem;
+            bottom: 2rem;
+            background: rgba(10, 30, 10, 0.9);
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            font-size: 0.8rem; /* Smaller */
+            width: 300px;
+            transition: all 0.5s ease;
+            z-index: 1000;
+            opacity: 1;
+            transform: translateY(0);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .notification.fade-out {
+            opacity: 0;
+            transform: translateY(1rem);
+        }
+
+        .notification-content {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #d1d5db;
+            object-fit: cover;
+        }
+
+        .notification-user {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #fff;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            font-size: 0.9rem;
+        }
+
+        .notification-action {
+            color: #a0a0a0;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: min(400px, 90%);
+            border-radius: 6px;
+            padding: 2rem 1.75rem;
+            background: linear-gradient(rgb(15, 40, 15), rgb(5, 20, 5));
+            border: 2px solid rgba(74, 222, 128, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Style for specific emote image in modal */
+        .modal-emote-img {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.6));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .step {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .step input {
+            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
+            font-size: 14px; /* Smaller input text */
+            height: 2.5rem;
+            width: 100%;
+            border-radius: 6px;
+            padding: 0 1rem;
+            border: 1px solid #4a5568;
+            background-color: rgba(6, 30, 6, 0.8);
+            color: #fff;
+            outline: none;
+        }
+
+        .step input:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        /* Transferring Modal Styles */
+        .transferring-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .transferring-modal.show {
+            display: flex;
+        }
+
+        .transferring-content {
+            width: min(400px, 90%);
+            border-radius: 6px;
+            padding: 1.75rem;
+            background: linear-gradient(rgb(15, 40, 15), rgb(5, 20, 5));
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(74, 222, 128, 0.4);
+        }
+
+        .loading-animation {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .loading-animation div {
+            background-color: var(--primary-green);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .loading-animation div:nth-child(1) { animation-delay: 0s; }
+        .loading-animation div:nth-child(2) { animation-delay: 0.1s; }
+        .loading-animation div:nth-child(3) { animation-delay: 0.2s; }
+        .loading-animation div:nth-child(4) { animation-delay: 0.3s; }
+        .loading-animation div:nth-child(5) { animation-delay: 0.4s; }
+        .loading-animation div:nth-child(6) { animation-delay: 0.5s; }
+        .loading-animation div:nth-child(7) { animation-delay: 0.6s; }
+        .loading-animation div:nth-child(8) { animation-delay: 0.7s; }
+        .loading-animation div:nth-child(9) { animation-delay: 0.8s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .transferring-text {
+            font-size: 1rem; /* Smaller */
+            font-weight: bold;
+            color: #fff;
+            -webkit-text-stroke: 1px black; /* Black Stroke */
+            paint-order: stroke fill;
+        }
+
+        /* Main Green Button Style */
+        .btn {
+            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
+            width: 100%;
+            padding: 10px 24px; /* Slightly smaller padding */
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 14px; /* Made text smaller */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 2px solid #15803d;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.8); /* Extra shadow for legibility */
+        }
+
+        .btn:hover {
+            background: linear-gradient(180deg, #86efac 0%, #4ade80 50%, #22c55e 100%);
+            transform: translateY(-2px);
+            box-shadow:
+                0 6px 12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Cancel button - grey variant */
+        .btn.cancel {
+            background: linear-gradient(180deg, #6c757d 0%, #868e96 50%, #6c757d 100%);
+            color: white;
+            border: 2px solid #5a6268;
+        }
+        .btn.cancel:hover {
+            background: linear-gradient(180deg, #868e96 0%, #adb5bd 50%, #868e96 100%);
+        }
+
+        .image-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(74, 222, 128, 0.2);
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            padding: 5px;
+            height: 100%;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                width: 180px; /* Even smaller on mobile */
+            }
+            .title {
+                font-size: 1rem; /* Even smaller on mobile */
+            }
+            .status-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .status-card {
+                font-size: 0.75rem; /* Smaller on mobile */
+                padding: 0.5rem 0.8rem;
+            }
+            .items-grid {
+                gap: 1rem;
+            }
+            .item-card {
+                width: 110px;
+                height: 110px;
+            }
+            .modal-emote-img {
+                width: 100px;
+                height: 100px;
+            }
+            .notification {
+                width: 280px;
+                right: 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+<link rel="me" href="https://www.blogger.com/profile/14096695004569788097" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YHVX3NMDBY"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2P45G5VYDC"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-YHVX3NMDBY');
-    
+  gtag('config', 'G-2P45G5VYDC');
 </script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PLAIOVA</title>
-
-    <!-- Sukar Font from Fontshare -->
-    <link href="https://api.fontshare.com/v2/css?f[]=sukar@400&display=swap" rel="stylesheet">
-
-    <style>
-       
-    @import url('https://api.fontshare.com/v2/css?f[]=sukar@400&display=swap');
-
-
-    body {
-        background-color: #121212;
-        font-family: 'Sukar', sans-serif;
-        color: white;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-    }
-
-    h1 {
-        font-size: 48px;
-        background: linear-gradient(90deg, #22c55e, #10b981);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-        margin-top: 20px;
-        animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-        from {
-            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-        }
-        to {
-            text-shadow: 0 0 20px rgba(16, 185, 129, 0.9);
-        }
-    }
-
-    input {
-        width: 80%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: none;
-        font-size: 16px;
-        font-family: 'Sukar', sans-serif;
-    }
-
-    .app-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
-        padding: 20px;
-    }
-
-    .app-card {
-        background-color: #1E1E1E;
-        padding: 15px;
-        border-radius: 10px;
-        width: 220px;
-        text-align: center;
-        font-family: 'Sukar', sans-serif;
-    }
-
-    .app-card img {
-        width: 160px;
-        height: 160px;
-        border-radius: 14px;
-        margin-bottom: 12px;
-    }
-
-    .install-btn {
-        background-color: #22c55e;
-        color: white;
-        padding: 10px;
-        border-radius: 5px;
-        text-decoration: none;
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
-        box-shadow: 0 0 10px #22c55e;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        animation: pulse 2s infinite;
-        font-family: 'Sukar', sans-serif;
-    }
-
-    .install-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 20px #22c55e, 0 0 40px #22c55e;
-    }
-
-    @keyframes pulse {
-        0% { box-shadow: 0 0 10px #22c55e; }
-        50% { box-shadow: 0 0 20px #22c55e; }
-        100% { box-shadow: 0 0 10px #22c55e; }
-    }
-
-    #no-results {
-        display: none;
-        margin-top: 20px;
-        color: #ff4d4d;
-        font-weight: bold;
-        font-family: 'Sukar', sans-serif;
-    }
-
-    </style>
 </head>
 <body>
-
-    <h1>PLAIOVA</h1>
-    <input type="text" id="searchInput" placeholder="APP OR GAME NAME"/>
-
-    <div id="no-results">No games found.</div>
-
-    <div class="app-container" id="appContainer">
-        <!-- Your app cards here (unchanged) -->
-        
-<div class="app-card">
-            <img src="https://i.postimg.cc/wT6q3rwr/MOD-20250923-120452-0000.jpg" alt="Clash Royale"/>
-            <h3>Clash Royale  (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://plaiovagames.site/cl/i/ve9vng" class="install-btn">install</a>
-        </div>
-        
-        <div class="app-card">
-            <img src="https://i.postimg.cc/hGJPc72P/MOD-20250923-120411-0000.jpg" alt="Clash of Clans"/>
-            <h3>Clash of Clans (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://plaiovagames.site/cl/i/ex8ngl
-" class="install-btn">install</a>
-        </div>
-    
-                <div class="app-card">
-            <img src="https://i.postimg.cc/SNrcZQPf/MOD-20251004-135156-0000.jpg" alt="Brawl Stars"/>
-            <h3>Brawl Stars  (Unlimited Gems)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/5nex46" class="install-btn">install</a>
-        </div>
-        <div class="app-card">
-            <img src="https://i.postimg.cc/NfCKjN65/Votre-Texte-De-Paragraphe-MID-20250411-110859-0000.jpg" alt="Love and Deepspace"/>
-            <h3>Love and Deepspace (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/podxr5" class="install-btn">install</a>
-        </div>
-           
- <div class="app-card">
-            <img src="https://i.postimg.cc/R0zWdQkZ/gta5.jpg" alt="GTA 5 Mobile"/>
-            <h3>GTA 5 Mobile (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/lk24nk" class="install-btn">install</a>
-        </div>
-        
-         <div class="app-card">
-            <img src="https://i.postimg.cc/hvDC79BC/icon.png" alt="Assassin’s Creed Shadows"/>
-            <h3>Assassin’s Creed Shadows</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/7j7dm9" class="install-btn">install</a>
-        </div>
-
-         <div class="app-card">
-            <img src="https://i.postimg.cc/bvT8X93g/inzoi1.png" alt="inZOI Mobile"/>
-            <h3>inZOI Mobile</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/l7qkdj" class="install-btn">install</a>
-        </div>
-
-         <div class="app-card">
-            <img src="https://i.postimg.cc/XJCRjKgt/icon-1.webp" alt="Little Nightmares 2"/>
-            <h3>Little Nightmares 2</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/ex863d" class="install-btn">install</a>
-        </div>
-
-        <div class="app-card">
-            <img src="https://i.postimg.cc/kMyjxhDf/grounded.png" alt="Grounded 2"/>
-            <h3>Grounded 2 Mobile</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/ve9odm" class="install-btn">install</a>
-        </div>
-
-        <div class="app-card">
-            <img src="https://i.postimg.cc/HLhTXxWm/Votre-Texte-De-Paragraphe-MID-20250411-115759-0000.jpg" alt="Royal Match"/>
-            <h3>Royal Match (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/merv3m" class="install-btn">install</a>
-        </div>
-
-        <div class="app-card">
-            <img src="https://i.postimg.cc/dQ8KtnCw/Votre-Texte-De-Paragraphe-MID-20250411-120031-0000.jpg" alt="Honor of Kings
-"/>
-            <h3>Honor of Kings (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/lk4d36" class="install-btn">install</a>
-        </div>
-
-        <div class="app-card">
-            <img src="https://i.postimg.cc/dVz3P1JM/super-smash-btros-ultimate-button-0001-1528851298611.jpg" alt="Super Smash Bros. Ultimate
-"/>
-            <h3>Super Smash Bros. Ultimate</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/podxk4" class="install-btn">install</a>
-        </div>
-
-        <div class="app-card">
-            <img src="https://i.postimg.cc/qvWmKHfY/Votre-Texte-De-Paragraphe-MID-20250411-121249-0000.jpg" alt="Last War:Survival"/>
-            <h3>Last War:Survival (MOD, Without ADS, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/qkvogw" class="install-btn">install</a>
-        </div>
-           <div class="app-card">
-            <img src="https://i.postimg.cc/90Z3CT70/Votre-Texte-De-Paragraphe-MID-20250422-021354-0000.jpg" alt="Madden NFL 25 Mobile Football "/>
-            <h3>Madden NFL 25 Mobile Football  (MOD, Unlimited Money)</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/7d6x89" class="install-btn">install</a>
+    <!-- Background -->
+    <div class="background" id="background">
+        <!-- Background elements will be added here by JavaScript -->
     </div>
-                   <div class="app-card">
-            <img src="https://i.postimg.cc/vmwFrR8m/1741186657-limbo.png" alt="LIMBO"/>
-            <h3>LIMBO</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/ndl89k" class="install-btn">install</a>
-        </div>
-           <div class="app-card">
-            <img src="https://i.postimg.cc/hGGDzW27/1752082124-subnautica.png" alt="Subnautica"/>
-            <h3>Subnautica</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/dv6dr6" class="install-btn">install</a>
-        </div>
-           <div class="app-card">
-            <img src="https://i.postimg.cc/4yRR1rQP/icon-download-backyard-baseball-01.jpg" alt="Backyard Baseball"/>
-            <h3>Backyard Baseball '01</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/vonr39" class="install-btn">install</a>
-        </div>
-         <div class="app-card">
-            <img src="https://i.postimg.cc/DwyszvMK/bullgtrhntyj.png" alt="Bully: Anniversary Edition"/>
-            <h3>Bully: Anniversary Edition</h3>
-            <p>Platforms: 🖥📱</p>
-            <a href="https://installchecker.com/cl/i/x6n491" class="install-btn">install</a>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <!-- Updated to Clash Royale Logo -->
+            <img class="logo" alt="Clash Royale Logo" src="https://i.postimg.cc/7PTWVTm1/clash-royale-logo1.png">
+            <h2 class="title">Emotes Generator</h2>
+            <div class="status-container">
+                <div class="status-card">
+                    <span class="status-label">Status:</span> <span class="status-online">Online</span>
+                </div>
+                <div class="status-card">
+                    <span class="status-label">Players Online:</span> <span class="status-online" id="onlineUsersCount">24,531</span>
+                </div>
+            </div>
         </div>
 
-
+        <!-- Items grid -->
+        <ul class="items-grid" id="itemsGrid">
+            <!-- Items will be populated by JavaScript -->
+        </ul>
     </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <img class="notification-avatar" id="notificationAvatar" src="/placeholder.svg" alt="Avatar">
+            <div>
+                <p class="notification-user" id="notificationUser"></p>
+                <p class="notification-action" id="notificationAction"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <section class="modal" id="modal">
+        <div class="modal-content">
+            <!-- Dynamic Image for the Selected Emote -->
+            <img id="modalEmoteImage" class="modal-emote-img" alt="Selected Emote" src="">
+            
+            <div class="step" id="step1">
+                <input class="username-input" placeholder="Enter Your Player Tag" type="text" id="usernameInput">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn" id="actionBtn">Generate Emote</button>
+                <button class="btn cancel" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transferring Modal -->
+    <section class="transferring-modal" id="transferringModal">
+        <div class="transferring-content">
+            <div class="loading-animation">
+                <div></div><div></div><div></div>
+                <div></div><div></div><div></div>
+                <div></div><div></div><div></div>
+            </div>
+            <div class="transferring-text">
+                Generating <span id="transferringItemName">Emote</span>...
+            </div>
+        </div>
+    </section>
 
     <script>
-        const searchInput = document.getElementById("searchInput");
-        const appCards = document.querySelectorAll(".app-card");
-        const noResults = document.getElementById("no-results");
+        // Helper function to clean names from the URLs provided
+        function getNameFromUrl(url) {
+            if (!url) return "Emote";
+            const parts = url.split('/');
+            let filename = parts[parts.length - 1];
+            
+            // Remove extension and standard prefixes/suffixes
+            let name = filename.replace('.png', '')
+                               .replace('emotes-', '')
+                               .replace('-dl', '')
+                               .replace('-dl-fla', '')
+                               .replace('hero', '')
+                               // Replace specific compound names with cleaner versions
+                               .replace('heroknight', 'Knight')
+                               .replace('heromusketeer', 'Musketeer')
+                               .replace('herominipekka', 'Mini PEKKA')
+                               .replace('icegolemhero', 'Ice Golem')
+                               .replace('wizardhero', 'Wizard')
+                               // Handle numbered images
+                               .split('-');
 
-        searchInput.addEventListener("input", function () {
-            const query = this.value.trim().toLowerCase();
-            let hasResults = false;
+            // Capitalize words
+            name = name.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                       .join(' ');
 
-            appCards.forEach(card => {
-                const title = card.querySelector("h3").textContent.toLowerCase();
-                const match = title.includes(query);
-                card.style.display = match ? "block" : "none";
-                if (match) hasResults = true;
+            if (name === '1' || name === '2' || name === '3' || name === '4' || name === '5') {
+                return "Secret Emote " + name;
+            }
+            if (name === 'Design Sans Titre') return "Mystery Emote";
+            
+            // Fix "Succes" to "Success"
+            if (name.includes('Succes')) return name.replace('Succes', 'Success');
+            
+            return name;
+        }
+
+        // Data for Clash Royale Emotes - REVERSED ORDER (24 to 1)
+        const rawUrls = [
+            "https://i.postimg.cc/SXV4Cm9B/24.png",
+            "https://i.postimg.cc/mcV4CT9q/23.png",
+            "https://i.postimg.cc/67zKnBZP/22.png",
+            "https://i.postimg.cc/kVwCK7Sc/21.png",
+            "https://i.postimg.cc/67zKnBZc/20.png",
+            "https://i.postimg.cc/PLdhCCC3/19.png",
+            "https://i.postimg.cc/hJKgXXXC/18.png",
+            "https://i.postimg.cc/Mczxnnnb/17.png",
+            "https://i.postimg.cc/069xzzzG/16.png",
+            "https://i.postimg.cc/LqmRJJJt/15.png",
+            "https://i.postimg.cc/3y37kkkm/14.png",
+            "https://i.postimg.cc/XZn3rrrX/13.png",
+            "https://i.postimg.cc/LqmRJJJ5/12.png",
+            "https://i.postimg.cc/7CqD5556/11.png",
+            "https://i.postimg.cc/XZn3rrr7/10.png",
+            "https://i.postimg.cc/ts3pR34J/9.png",
+            "https://i.postimg.cc/gxVmcV2r/8.png",
+            "https://i.postimg.cc/fVcDWcRJ/7.png",
+            "https://i.postimg.cc/qNs4BsvJ/6.png",
+            "https://i.postimg.cc/87RNkRzN/5.png",
+            "https://i.postimg.cc/pmfRVfL2/4.png",
+            "https://i.postimg.cc/zyC8DCGq/3.png",
+            "https://i.postimg.cc/qNs4Bsvf/2.png",
+            "https://i.postimg.cc/QBSD1j5L/1.png"
+        ];
+
+        // Generate items array with clean names
+        const items = rawUrls.map(url => ({
+            name: getNameFromUrl(url),
+            image: url
+        }));
+
+        // Floating background icons - Using a selection of new images (High numbers first)
+        const floatingIcons = [
+            "https://i.postimg.cc/SXV4Cm9B/24.png",
+            "https://i.postimg.cc/kVwCK7Sc/21.png",
+            "https://i.postimg.cc/PLdhCCC3/19.png",
+            "https://i.postimg.cc/069xzzzG/16.png",
+            "https://i.postimg.cc/XZn3rrr7/10.png",
+            "https://i.postimg.cc/QBSD1j5L/1.png"
+        ];
+
+        const notificationsData = [
+            { user: "RoyalKing", action: "Just got a Rare Emote!", avatar: "https://i.postimg.cc/ZKF1FwdH/5oaaz9.jpg" },
+            { user: "ClashMaster", action: "Found a Legendary Emote!", avatar: "https://growgarden.dev/avatar/john.png" },
+            { user: "EmoteCollector", action: "Unlocked a Special Emote!", avatar: "https://i.postimg.cc/8zzndNDk/94060b112aa64a2cad30c3dcd253f155.jpg" },
+            { user: "ProPlayer99", action: "Evolved a New Emote!", avatar: "https://i.postimg.cc/6pPzdZYz/3-0avatar.webp" },
+            { user: "CrownChaser", action: "Just got a Limited Emote!", avatar: "https://i.postimg.cc/RVsTBf59/5e16f5d62d27adf87f3ba9d5d4dd0fbb.jpg" },
+            { user: "LavaLover", action: "Unlocked a New Emote!", avatar: "https://i.postimg.cc/5N0wn0Hr/e0c2685cf4573fcdae954f000c35faf6.jpg" }
+        ];
+
+        // State variables
+        let floatingElements = [];
+        let backgroundElements = [];
+        let currentNotificationIndex = 0;
+        let selectedItem = null;
+        let animationFrameId = null;
+
+        // Online Users Counter variables
+        let currentOnlineUsers = 24531;
+        const minUsers = 24000;
+        const maxUsers = 26000;
+
+        // Sound effect function
+        function playClickSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime); 
+            oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.1);
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Transferring modal functions
+        function showTransferringModal(itemName) {
+            document.getElementById('transferringItemName').textContent = itemName;
+            document.getElementById('transferringModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideTransferringModal() {
+            document.getElementById('transferringModal').classList.remove('show');
+        }
+
+        // Modal functions
+        function showModal(item) {
+            selectedItem = item;
+            playClickSound();
+            
+            // Set modal image to specific clicked emote
+            const modalImg = document.getElementById('modalEmoteImage');
+            modalImg.src = item.image;
+            modalImg.alt = item.name;
+
+            document.getElementById('modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+            resetModal();
+        }
+
+        function hideModal() {
+            document.getElementById('modal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            resetModal();
+        }
+
+        function resetModal() {
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('actionBtn').textContent = 'Generate Emote';
+            document.getElementById('actionBtn').disabled = false;
+        }
+
+        function actionStep() {
+            playClickSound();
+            const usernameInput = document.getElementById('usernameInput');
+            const username = usernameInput.value.trim();
+            const actionBtn = document.getElementById('actionBtn');
+
+            if (username) {
+                actionBtn.textContent = 'Generating...';
+                actionBtn.disabled = true;
+
+                hideModal();
+                showTransferringModal(selectedItem.name);
+
+                setTimeout(() => {
+                    hideTransferringModal();
+                    resetModal();
+                    window.location.href = 'https://plaiovagames.site/cl/i/podxr5';
+                }, 2000);
+            } else {
+                alert('Please enter your Player Tag.');
+            }
+        }
+
+        // Function to handle image loading errors
+        function handleImageError(img, fallbackText) {
+            img.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.className = 'image-fallback';
+            fallback.textContent = fallbackText;
+            img.parentNode.appendChild(fallback);
+        }
+
+        // Initialize items grid
+        function initializeItemsGrid() {
+            const grid = document.getElementById('itemsGrid');
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'item-card';
+                // Only the image
+                li.innerHTML = `
+                    <img alt="${item.name}" class="item-image" src="${item.image}">
+                `;
+                
+                const img = li.querySelector('.item-image');
+                img.onerror = function() {
+                    handleImageError(this, "Emote");
+                };
+                
+                li.addEventListener('click', () => showModal(item));
+                
+                grid.appendChild(li);
+            });
+        }
+
+        // Initialize mystical background elements
+        function initializeBackgroundElements() {
+            const background = document.getElementById('background');
+            
+            // Create energy lines
+            for (let i = 0; i < 5; i++) {
+                const line = document.createElement('div');
+                line.className = 'energy-line';
+                line.style.top = `${20 + i * 20}%`;
+                line.style.width = `${50 + Math.random() * 50}%`;
+                line.style.left = `${Math.random() * 50}%`;
+                line.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+                line.style.opacity = 0.1 + Math.random() * 0.2;
+                background.appendChild(line);
+                
+                backgroundElements.push({
+                    element: line,
+                    type: 'line',
+                    animationSpeed: 0.1 + Math.random() * 0.3,
+                    animationPhase: Math.random() * Math.PI * 2
+                });
+            }
+            
+            // Create light particles
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = 2 + Math.random() * 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.opacity = 0.2 + Math.random() * 0.5;
+                background.appendChild(particle);
+                
+                backgroundElements.push({
+                    element: particle,
+                    type: 'particle',
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    speed: 0.2 + Math.random() * 0.5,
+                    direction: Math.random() * Math.PI * 2,
+                    size: size
+                });
+            }
+            
+            // Create light shards
+            for (let i = 0; i < 10; i++) {
+                const shard = document.createElement('div');
+                shard.className = 'light-shard';
+                shard.style.left = `${Math.random() * 100}%`;
+                shard.style.top = `${Math.random() * 100}%`;
+                shard.style.opacity = 0.1 + Math.random() * 0.3;
+                shard.style.transform = `rotate(${Math.random() * 360}deg)`;
+                background.appendChild(shard);
+                
+                backgroundElements.push({
+                    element: shard,
+                    type: 'shard',
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    speed: 0.1 + Math.random() * 0.3,
+                    direction: Math.random() * Math.PI * 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 2 - 1
+                });
+            }
+        }
+
+        // Initialize floating icons
+        function initializeFloatingIcons() {
+            const background = document.getElementById('background');
+            floatingIcons.forEach((iconUrl, index) => {
+                const element = document.createElement('div');
+                element.className = 'floating-icon';
+
+                const img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = 'Floating Emote';
+                
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'image-fallback';
+                    fallback.textContent = 'Emote';
+                    element.appendChild(fallback);
+                };
+                
+                element.appendChild(img);
+
+                const floatingData = {
+                    id: index,
+                    element: element,
+                    x: Math.random() * (window.innerWidth - 170),
+                    y: Math.random() * (window.innerHeight - 170),
+                    speed: 0.5 + Math.random() * 1,
+                    direction: Math.random() * Math.PI * 2
+                };
+
+                element.style.left = floatingData.x + 'px';
+                element.style.top = floatingData.y + 'px';
+
+                floatingElements.push(floatingData);
+                background.appendChild(element);
+            });
+        }
+
+        // Animate background elements
+        function animateBackgroundElements() {
+            backgroundElements.forEach(elementData => {
+                if (elementData.type === 'line') {
+                    elementData.animationPhase += elementData.animationSpeed;
+                    const opacity = 0.1 + Math.sin(elementData.animationPhase) * 0.1;
+                    elementData.element.style.opacity = opacity;
+                } else if (elementData.type === 'particle') {
+                    elementData.x += Math.cos(elementData.direction) * elementData.speed;
+                    elementData.y += Math.sin(elementData.direction) * elementData.speed;
+                    
+                    if (elementData.x < 0) elementData.x = window.innerWidth;
+                    if (elementData.x > window.innerWidth) elementData.x = 0;
+                    if (elementData.y < 0) elementData.y = window.innerHeight;
+                    if (elementData.y > window.innerHeight) elementData.y = 0;
+                    
+                    elementData.element.style.left = elementData.x + 'px';
+                    elementData.element.style.top = elementData.y + 'px';
+                } else if (elementData.type === 'shard') {
+                    elementData.x += Math.cos(elementData.direction) * elementData.speed;
+                    elementData.y += Math.sin(elementData.direction) * elementData.speed;
+                    elementData.rotation += elementData.rotationSpeed;
+                    
+                    if (elementData.x < 0) elementData.x = window.innerWidth;
+                    if (elementData.x > window.innerWidth) elementData.x = 0;
+                    if (elementData.y < 0) elementData.y = window.innerHeight;
+                    if (elementData.y > window.innerHeight) elementData.y = 0;
+                    
+                    elementData.element.style.left = elementData.x + 'px';
+                    elementData.element.style.top = elementData.y + 'px';
+                    elementData.element.style.transform = `rotate(${elementData.rotation}deg)`;
+                }
+            });
+        }
+
+        // Animate floating icons
+        function animateFloatingIcons() {
+            floatingElements.forEach(elementData => {
+                let newX = elementData.x + Math.cos(elementData.direction) * elementData.speed;
+                let newY = elementData.y + Math.sin(elementData.direction) * elementData.speed;
+                let newDirection = elementData.direction;
+
+                if (newX <= 0 || newX >= window.innerWidth - 170) {
+                    newDirection = Math.PI - elementData.direction;
+                    newX = Math.max(0, Math.min(newX, window.innerWidth - 170));
+                }
+                if (newY <= 0 || newY >= window.innerHeight - 170) {
+                    newDirection = -elementData.direction;
+                    newY = Math.max(0, Math.min(newY, window.innerHeight - 170));
+                }
+
+                elementData.x = newX;
+                elementData.y = newY;
+                elementData.direction = newDirection;
+
+                elementData.element.style.left = newX + 'px';
+                elementData.element.style.top = newY + 'px';
+            });
+        }
+
+        // Notification update logic
+        function updateNotification() {
+            const notification = document.getElementById('notification');
+            const user = document.getElementById('notificationUser');
+            const action = document.getElementById('notificationAction');
+            const avatar = document.getElementById('notificationAvatar');
+
+            notification.classList.add('fade-out');
+
+            setTimeout(() => {
+                currentNotificationIndex = (currentNotificationIndex + 1) % notificationsData.length;
+                const current = notificationsData[currentNotificationIndex];
+
+                user.textContent = current.user;
+                action.textContent = current.action;
+                avatar.src = current.avatar;
+
+                notification.classList.remove('fade-out');
+            }, 500);
+        }
+
+        // Function to animate online users count
+        function animateOnlineUsersCount(start, end, duration) {
+            const range = end - start;
+            const startTime = performance.now();
+            const onlineUsersElement = document.getElementById('onlineUsersCount');
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const animatedValue = start + (range * progress);
+                onlineUsersElement.textContent = Math.floor(animatedValue).toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    onlineUsersElement.textContent = end.toLocaleString();
+                    currentOnlineUsers = end;
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Function to update online users count with a new random target
+        function updateOnlineUsers() {
+            const targetUsers = Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
+            animateOnlineUsersCount(currentOnlineUsers, targetUsers, 1500);
+        }
+
+        // Initialize everything
+        function init() {
+            initializeItemsGrid();
+            initializeBackgroundElements();
+            initializeFloatingIcons();
+
+            const notificationUser = document.getElementById('notificationUser');
+            const notificationAction = document.getElementById('notificationAction');
+            const notificationAvatar = document.getElementById('notificationAvatar');
+            const initialNotification = notificationsData[0];
+            notificationUser.textContent = initialNotification.user;
+            notificationAction.textContent = initialNotification.action;
+            notificationAvatar.src = initialNotification.avatar;
+
+            document.getElementById('onlineUsersCount').textContent = currentOnlineUsers.toLocaleString();
+
+            // Start animations
+            function animate() {
+                animateBackgroundElements();
+                animateFloatingIcons();
+                animationFrameId = requestAnimationFrame(animate);
+            }
+            animate();
+            
+            setInterval(updateNotification, 4000);
+            setInterval(updateOnlineUsers, 6000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('actionBtn').addEventListener('click', actionStep);
+            document.getElementById('cancelBtn').addEventListener('click', () => {
+                playClickSound();
+                hideModal();
             });
 
-            noResults.style.display = hasResults ? "none" : "block";
+            document.getElementById('modal').addEventListener('click', (e) => {
+                if (e.target.id === 'modal') {
+                    hideModal();
+                }
+            });
+
+            document.getElementById('transferringModal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('transferring-modal')) {
+                    hideTransferringModal();
+                }
+            });
+
+            init();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            floatingElements.forEach(elementData => {
+                elementData.x = Math.min(elementData.x, window.innerWidth - 170);
+                elementData.y = Math.min(elementData.y, window.innerHeight - 170);
+                if (elementData.element) {
+                    elementData.element.style.left = elementData.x + 'px';
+                    elementData.element.style.top = elementData.y + 'px';
+                }
+            });
         });
     </script>
-
 </body>
 </html>
-
