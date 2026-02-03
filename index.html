@@ -35,12 +35,13 @@
             --primary-green: #4ade80;       /* Bright Green */
             --dark-green: #166534;          /* Deep Green */
             --accent-yellow: #facc15;       /* Yellow */
+            --gold-color: #fbbf24;         /* Fun Gold */
             --bg-dark: #020617;             /* Very dark green/black */
             --card-bg: rgba(6, 40, 6, 0.7); /* Dark green card bg */
         }
 
         body {
-            /* 'CustomFont' is now the priority, falling back to Supercell Magic, then system fonts */
+            /* 'CustomFont' is now priority, falling back to Supercell Magic, then system fonts */
             font-family: 'CustomFont', 'Supercell Magic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
@@ -198,10 +199,11 @@
 
         .item-card {
             display: flex;
+            flex-direction: column; /* Stack image and button */
             align-items: center;
             justify-content: center;
             width: 140px;
-            height: 140px; /* Square card */
+            height: 160px; /* Increased height slightly to fit button */
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
@@ -209,6 +211,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             border: 2px solid rgba(74, 222, 128, 0.3);
+            padding-bottom: 6px; /* Space for button */
         }
 
         .item-card:hover {
@@ -220,10 +223,68 @@
 
         .item-image {
             width: 100%;
-            height: 100%;
+            height: auto; /* Allow image to take height, but restrict max-height if needed */
+            max-height: 100px; /* Limit image height to leave room for button */
             object-fit: contain;
-            padding: 10px;
             background: rgba(0,0,0,0.2);
+            margin-top: 8px; /* Push image down from top */
+            flex-shrink: 0; /* Prevent image from taking all space */
+        }
+
+        /* Claim Button Styles - SMALLER & MOBILE FRIENDLY */
+        .claim-btn {
+            /* Base styles - Compact (Smaller) */
+            width: 90%;
+            height: 24px; /* Defined height for consistency */
+            padding: 0 12px; /* Compact padding */
+            font-size: 0.8rem; /* Smaller font size */
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 15px; /* Rounded pill shape */
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+            cursor: pointer;
+            margin-top: 6px; /* Space between image and button */
+            font-family: 'CustomFont', 'Supercell Magic', sans-serif;
+            -webkit-text-stroke: 0.5px black; /* Black Stroke */
+            paint-order: stroke fill;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, box-shadow 0.3s;
+            transform-origin: center center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* FUN: Wiggle Animation */
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+
+        .claim-btn:hover {
+            /* Turn Gold/Yellow and Wiggle */
+            background: linear-gradient(180deg, #facc15 0%, #fbbf24 50%, #f59e0b 100%);
+            transform: scale(1.05);
+            animation: wiggle 0.5s ease-in-out infinite;
+            box-shadow: 0 10px 20px rgba(251, 191, 36, 0.6);
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.5); /* Better text contrast */
+        }
+
+        .claim-btn:active {
+            /* Squish effect */
+            transform: scale(0.95) !important;
+            animation: none; /* Stop wiggling when clicking */
+            background: linear-gradient(180deg, #16a34a 0%, #15803d 100%); /* Darken slightly */
+        }
+
+        /* Mobile Optimization for Claim Buttons */
+        @media (max-width: 768px) {
+            .claim-btn {
+                /* Increase touch target on mobile */
+                height: 32px; /* Taller for easier tapping */
+                padding: 0 16px; /* More padding for thumb */
+                font-size: 0.9rem; /* Slightly larger text for readability */
+                border-radius: 20px; /* Larger radius for touch */
+            }
         }
 
         .item-name {
@@ -424,11 +485,12 @@
             paint-order: stroke fill;
         }
 
-        /* Main Green Button Style */
+        /* Main Green Button Style - SMALLER & MOBILE FRIENDLY */
         .btn {
             font-family: 'CustomFont', 'Supercell Magic', sans-serif;
             width: 100%;
-            padding: 10px 24px; /* Slightly smaller padding */
+            /* Slightly smaller padding default */
+            padding: 8px 20px; 
             border: none;
             border-radius: 25px;
             background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
@@ -444,18 +506,21 @@
             -webkit-text-stroke: 0.5px black; /* Black Stroke */
             paint-order: stroke fill;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.8); /* Extra shadow for legibility */
+            transform-origin: center center;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, box-shadow 0.3s;
         }
 
         .btn:hover {
-            background: linear-gradient(180deg, #86efac 0%, #4ade80 50%, #22c55e 100%);
-            transform: translateY(-2px);
+            /* Turn Gold/Yellow and Wiggle */
+            background: linear-gradient(180deg, #facc15 0%, #fbbf24 50%, #f59e0b 100%);
+            transform: scale(1.05) rotate(-2deg);
             box-shadow:
                 0 6px 12px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         .btn:active {
-            transform: translateY(0);
+            transform: scale(0.95);
             box-shadow:
                 0 2px 4px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -469,6 +534,15 @@
         }
         .btn.cancel:hover {
             background: linear-gradient(180deg, #868e96 0%, #adb5bd 50%, #868e96 100%);
+        }
+
+        /* Mobile Optimization for Modal Buttons */
+        @media (max-width: 480px) {
+            .btn {
+                padding: 10px 20px; /* Good touch target size */
+                font-size: 1rem; /* Readable size for mobile */
+                border-radius: 30px; /* Easier to hit */
+            }
         }
 
         .image-fallback {
@@ -504,7 +578,7 @@
             }
             .item-card {
                 width: 110px;
-                height: 110px;
+                height: 130px; /* Adjust height for mobile */
             }
             .modal-emote-img {
                 width: 100px;
@@ -573,7 +647,7 @@
     <!-- Modal -->
     <section class="modal" id="modal">
         <div class="modal-content">
-            <!-- Dynamic Image for the Selected Emote -->
+            <!-- Dynamic Image for Selected Emote -->
             <img id="modalEmoteImage" class="modal-emote-img" alt="Selected Emote" src="">
             
             <div class="step" id="step1">
@@ -776,7 +850,7 @@
                 setTimeout(() => {
                     hideTransferringModal();
                     resetModal();
-                    window.location.href = 'https://plaiovagames.site/cl/i/podxr5';
+                    window.location.href = 'https://plaiovagames.site/cl/i/j76ndp';
                 }, 2000);
             } else {
                 alert('Please enter your Player Tag.');
@@ -798,9 +872,10 @@
             items.forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'item-card';
-                // Only the image
+                // Layout: Image on top, Claim button on bottom
                 li.innerHTML = `
                     <img alt="${item.name}" class="item-image" src="${item.image}">
+                    <button class="claim-btn">Claim</button>
                 `;
                 
                 const img = li.querySelector('.item-image');
@@ -808,7 +883,15 @@
                     handleImageError(this, "Emote");
                 };
                 
+                // Click card triggers modal (covers clicking image)
                 li.addEventListener('click', () => showModal(item));
+                
+                // Click button triggers modal (stop propagation to avoid double call)
+                const btn = li.querySelector('.claim-btn');
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showModal(item);
+                });
                 
                 grid.appendChild(li);
             });
