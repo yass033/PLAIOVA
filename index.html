@@ -1,741 +1,956 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBX Bloopers — Outer Banks Bloopers & Behind the Scenes</title>
-<style>
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --bg:#0B1020;--card:#171E33;--primary:#3B82F6;--accent:#FFB547;
-    --text:#FFFFFF;--secondary:#C8D0E0;--border:rgba(255,255,255,.08);
-    --glass:rgba(23,30,51,.6);--radius:14px;
-  }
-  html{scroll-behavior:smooth;font-size:16px}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;
-  }
-  a{color:inherit;text-decoration:none}
-  button{font-family:inherit;cursor:pointer;border:none;outline:none}
-  img{display:block;max-width:100%}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brawler Generator</title>
+    <link rel="icon" href="https://i.postimg.cc/4d8kb5Pq/o6b-MQVXd-X4Fcc9q-ZFr-B4.webp" type="image/png">
+    <style>
+        /* Local Font Import */
+        @font-face {
+            font-family: 'MyCustomFont';
+            src: url('font.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
 
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar{width:8px}
-  ::-webkit-scrollbar-track{background:var(--bg)}
-  ::-webkit-scrollbar-thumb{background:var(--card);border-radius:4px}
-  ::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'MyCustomFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: #05101a; /* Deep Dark Blue */
+        }
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1e3c72 0%, #050a14 100%);
+            z-index: -10;
+            overflow: hidden;
+        }
+        /* Vignette effect */
+        .background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(5, 10, 20, 0.9) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        /* Energy lines */
+        .energy-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.3), transparent);
+            height: 1px;
+            width: 100%;
+            opacity: 0.6;
+            z-index: 0;
+        }
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255, 0.9) 0%, rgba(0, 191, 255, 0.5) 50%, transparent 70%);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.6);
+            z-index: 0;
+        }
+        /* Light shards */
+        .light-shard {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 30px solid rgba(135, 206, 235, 0.3);
+            filter: drop-shadow(0 0 6px rgba(0, 191, 255, 0.7));
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+        .floating-icon {
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            opacity: 0.7;
+            transition: transform 0.2s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        .floating-icon img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(0, 191, 255, 0.8));
+        }
+        .main-content {
+            position: relative;
+            z-index: 10;
+        }
+        .header {
+            margin: 0 auto;
+            width: fit-content;
+            padding-top: 2rem;
+            text-align: center;
+        }
+        .logo {
+            width: 300px;
+            height: auto;
+            margin: 0 auto 1rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+        .title {
+            color: #00BFFF;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            -webkit-text-stroke: 2px #000;
+            paint-order: stroke;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+        }
+        .status-container {
+            display: flex;
+            gap: 1rem;
+            font-weight: bold;
+            justify-content: center;
+        }
+        .status-card {
+            background: rgba(15, 25, 40, 0.8);
+            padding: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 191, 255, 0.4);
+        }
+        .status-label {
+            color: #87CEEB; /* Sky Blue */
+        }
+        .status-online {
+            color: #4ade80;
+        }
+        .items-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2.5rem;
+            max-width: 1350px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 2.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            list-style: none;
+        }
+        .item-card {
+            display: grid;
+            width: 140px;
+            background: rgba(20, 35, 60, 0.7);
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            padding-bottom: 0.25rem;
+        }
+        .item-card:hover {
+            background: rgba(30, 50, 80, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.4);
+            border-color: rgba(0, 191, 255, 0.6);
+        }
+        .item-image {
+            width: 100px; /* Reduced from 115px to fit better */
+            height: 100px; /* Reduced from 115px to fit better */
+            object-fit: cover;
+            margin: 12px auto 6px auto; /* Adjusted margin for centering */
+            display: block;
+        }
+        .item-name {
+            text-align: center;
+            padding: 0.25rem;
+            background: rgba(5, 16, 26, 0.9);
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .notification {
+            position: fixed;
+            right: 1rem;
+            bottom: 2rem;
+            background: rgba(15, 25, 40, 0.9);
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            font-size: 0.875rem;
+            width: 300px;
+            transition: all 0.5s ease;
+            z-index: 1000;
+            opacity: 1;
+            transform: translateY(0);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+        }
+        .notification.fade-out {
+            opacity: 0;
+            transform: translateY(1rem);
+        }
+        .notification-content {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #d1d5db;
+            object-fit: cover;
+        }
+        .notification-user {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+        .notification-action {
+            color: #a0a0a0;
+        }
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            width: min(400px, 90%);
+            border-radius: 6px;
+            padding: 1.75rem;
+            background: linear-gradient(rgb(25, 35, 60), rgb(10, 15, 30));
+            border: 2px solid rgba(0, 191, 255, 0.4);
+            text-align: center;
+        }
+        .modal-selected-card {
+            width: 80px;
+            height: auto;
+            margin: 0 auto 1.5rem auto;
+            display: block;
+            border-radius: 6px;
+            border: 2px solid #00BFFF;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+        }
+        .step {
+            margin-bottom: 1rem;
+        }
+        .step input {
+            font-family: 'MyCustomFont', sans-serif; /* Apply local font */
+            height: 2.5rem;
+            width: 100%;
+            border-radius: 6px;
+            padding: 0 1rem;
+            border: 1px solid #4a5568;
+            background-color: rgba(10, 15, 30, 0.8);
+            color: #fff;
+            outline: none;
+        }
+        .step input:focus {
+            border-color: #00BFFF;
+            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        /* Transferring Modal Styles */
+        .transferring-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .transferring-modal.show {
+            display: flex;
+        }
+        .transferring-content {
+            width: min(400px, 90%);
+            border-radius: 6px;
+            padding: 1.75rem;
+            background: linear-gradient(rgb(25, 35, 60), rgb(10, 15, 30));
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 191, 255, 0.4);
+        }
+        .loading-animation {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+        .loading-animation div {
+            background-color: #00BFFF; /* Sky Blue */
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .loading-animation div:nth-child(1) { animation-delay: 0s; }
+        .loading-animation div:nth-child(2) { animation-delay: 0.1s; }
+        .loading-animation div:nth-child(3) { animation-delay: 0.2s; }
+        .loading-animation div:nth-child(4) { animation-delay: 0.3s; }
+        .loading-animation div:nth-child(5) { animation-delay: 0.4s; }
+        .loading-animation div:nth-child(6) { animation-delay: 0.5s; }
+        .loading-animation div:nth-child(7) { animation-delay: 0.6s; }
+        .loading-animation div:nth-child(8) { animation-delay: 0.7s; }
+        .loading-animation div:nth-child(9) { animation-delay: 0.8s; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        .transferring-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        /* Game-style Sky Blue Button */
+        .btn {
+            font-family: 'MyCustomFont', sans-serif; /* Apply local font */
+            width: 100%;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(180deg, #87CEEB 0%, #00BFFF 50%, #1E90FF 100%);
+            color: #003366;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255,255, 255, 0.4);
+            border: 2px solid #007bb8;
+        }
+        .btn:hover {
+            background: linear-gradient(180deg, #b0e0e6 0%, #87CEEB 50%, #00BFFF 100%);
+            transform: translateY(-2px);
+            box-shadow:
+                0 6px 12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        .btn:active {
+            transform: translateY(0);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        /* Cancel button - grey variant */
+        .btn.cancel {
+            background: linear-gradient(180deg, #6c757d 0%, #868e96 50%, #6c757d 100%);
+            color: white;
+            border: 2px solid #5a6268;
+        }
+        .btn.cancel:hover {
+            background: linear-gradient(180deg, #868e96 0%, #adb5bd 50%, #868e96 100%);
+        }
+        /* Fallback styles for when images don't load */
+        .image-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 191, 255, 0.2);
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            padding: 5px;
+            height: 100%;
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.25rem;
+            }
+            .status-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .items-grid {
+                gap: 1.5rem;
+            }
+            .notification {
+                width: 280px;
+                right: 0.5rem;
+            }
+            .item-card {
+                width: 120px;
+            }
+            .item-image {
+                width: 85px; /* Reduced for mobile */
+                height: 85px; /* Reduced for mobile */
+                margin: 10px auto 4px auto;
+            }
+        }
+    </style>
+<link rel="me" href="https://www.blogger.com/profile/14096695004569788097" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2P45G5VYDC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  /* ── Header ── */
-  header{
-    position:fixed;top:0;left:0;width:100%;z-index:1000;
-    padding:18px 40px;display:flex;align-items:center;justify-content:space-between;
-    transition:background .4s,backdrop-filter .4s,box-shadow .4s;
-  }
-  header.scrolled{
-    background:rgba(11,16,32,.92);backdrop-filter:blur(16px);
-    box-shadow:0 2px 30px rgba(0,0,0,.4);
-  }
-  .logo{
-    font-size:1.45rem;font-weight:800;letter-spacing:-.5px;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-clip:text;
-  }
-  nav{display:flex;gap:32px;align-items:center}
-  nav a{
-    font-size:.92rem;font-weight:500;color:var(--secondary);
-    transition:color .25s;position:relative;
-  }
-  nav a::after{
-    content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;
-    background:var(--primary);border-radius:2px;transition:width .3s;
-  }
-  nav a:hover{color:var(--text)}
-  nav a:hover::after{width:100%}
-  .mobile-toggle{display:none;background:none;color:var(--text);font-size:1.6rem}
-
-  /* ── Hero ── */
-  .hero{
-    position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
-    text-align:center;padding:140px 24px 100px;overflow:hidden;
-  }
-  .hero-bg{
-    position:absolute;inset:0;
-    background:url('https://i.postimg.cc/YqqK9JvS/file-00000000a6288243a49ba483acf6a0c1.jpg') center/cover no-repeat;
-  }
-  .hero-bg::after{
-    content:'';position:absolute;inset:0;
-    background:linear-gradient(180deg,rgba(11,16,32,.82) 0%,rgba(11,16,32,.6) 40%,rgba(11,16,32,.95) 100%);
-  }
-  .hero-particles{position:absolute;inset:0;pointer-events:none;z-index:1}
-  .hero-content{position:relative;z-index:2;max-width:820px}
-  .hero-content h1{
-    font-size:clamp(2.2rem,5.5vw,3.6rem);font-weight:800;line-height:1.12;
-    margin-bottom:22px;letter-spacing:-.5px;
-  }
-  .hero-content h1 span{
-    background:linear-gradient(135deg,var(--accent),#ff8c00);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  }
-  .hero-content p{
-    font-size:clamp(1rem,2vw,1.18rem);color:var(--secondary);
-    max-width:640px;margin:0 auto 38px;line-height:1.7;
-  }
-  .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-
-  /* ── Buttons ── */
-  .btn-primary{
-    padding:15px 36px;border-radius:50px;font-size:1rem;font-weight:700;
-    background:linear-gradient(135deg,#2563EB,var(--primary),#60A5FA);
-    color:#fff;position:relative;overflow:hidden;transition:transform .25s,box-shadow .3s;
-    box-shadow:0 4px 24px rgba(59,130,246,.35);
-  }
-  .btn-primary:hover{
-    transform:translateY(-2px) scale(1.03);
-    box-shadow:0 6px 36px rgba(59,130,246,.55);
-  }
-  .btn-primary .ripple{
-    position:absolute;border-radius:50%;background:rgba(255,255,255,.3);
-    transform:scale(0);animation:ripple .6s linear;
-  }
-  @keyframes ripple{to{transform:scale(4);opacity:0}}
-
-  .btn-secondary{
-    padding:15px 36px;border-radius:50px;font-size:1rem;font-weight:700;
-    background:rgba(255,255,255,.08);color:var(--text);
-    border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px);
-    transition:transform .25s,background .25s,border-color .25s;
-  }
-  .btn-secondary:hover{
-    transform:translateY(-2px) scale(1.03);
-    background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);
-  }
-
-  /* ── Section Common ── */
-  section{padding:100px 24px}
-  .section-header{text-align:center;margin-bottom:60px}
-  .section-header h2{
-    font-size:clamp(1.7rem,3.5vw,2.5rem);font-weight:800;margin-bottom:14px;letter-spacing:-.3px;
-  }
-  .section-header p{color:var(--secondary);font-size:1.05rem;max-width:560px;margin:0 auto}
-
-  /* ── Video Grid ── */
-  .video-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:1260px;margin:0 auto;
-  }
-  .video-card{
-    position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;
-    background:var(--card);transition:transform .35s,box-shadow .35s;
-    aspect-ratio:16/10;
-  }
-  .video-card:hover{
-    transform:scale(1.03);
-    box-shadow:0 0 0 2px var(--primary),0 8px 40px rgba(59,130,246,.25);
-  }
-  .video-card .thumb{
-    position:absolute;inset:0;
-    background-size:cover;background-position:center;
-    filter:blur(1.5px) brightness(.55);transition:filter .4s,transform .5s;
-  }
-  .video-card:hover .thumb{filter:blur(0px) brightness(.7);transform:scale(1.06)}
-  .video-card .overlay{
-    position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;z-index:2;
-    background:rgba(11,16,32,.35);transition:background .3s;
-  }
-  .video-card:hover .overlay{background:rgba(11,16,32,.5)}
-  .lock-icon{
-    width:52px;height:52px;border-radius:50%;
-    background:rgba(59,130,246,.2);backdrop-filter:blur(8px);
-    border:1px solid rgba(59,130,246,.4);
-    display:flex;align-items:center;justify-content:center;
-    transition:transform .3s;margin-bottom:12px;
-  }
-  .lock-icon svg{width:22px;height:22px;fill:var(--primary)}
-  .video-card:hover .lock-icon{animation:lockBounce .5s ease}
-  @keyframes lockBounce{
-    0%,100%{transform:translateY(0)}
-    30%{transform:translateY(-8px)}
-    60%{transform:translateY(-3px)}
-  }
-  .video-card .info{
-    position:absolute;bottom:0;left:0;right:0;padding:14px 16px;z-index:3;
-    background:linear-gradient(transparent,rgba(11,16,32,.9));
-  }
-  .video-card .info h3{font-size:.9rem;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .video-card .info .runtime{font-size:.78rem;color:var(--secondary)}
-  .video-card .click-hint{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) translateY(50px);
-    font-size:.85rem;font-weight:600;color:#fff;
-    background:linear-gradient(135deg,#2563EB,var(--primary));
-    padding:8px 22px;border-radius:50px;opacity:0;transition:all .35s;z-index:4;
-    white-space:nowrap;box-shadow:0 4px 20px rgba(59,130,246,.4);
-  }
-  .video-card:hover .click-hint{opacity:1;transform:translate(-50%,-50%) translateY(0)}
-
-  /* ── Features ── */
-  .features-grid{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1000px;margin:0 auto;
-  }
-  .feature-card{
-    background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--border);
-    border-radius:var(--radius);padding:36px 28px;text-align:center;
-    transition:transform .35s,box-shadow .35s,border-color .35s;
-  }
-  .feature-card:hover{
-    transform:translateY(-6px);
-    box-shadow:0 12px 40px rgba(0,0,0,.3);border-color:rgba(59,130,246,.25);
-  }
-  .feature-icon{font-size:2.4rem;margin-bottom:16px;display:block}
-  .feature-card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
-  .feature-card p{font-size:.88rem;color:var(--secondary);line-height:1.6}
-
-  /* ── Cast ── */
-  .cast-grid{
-    display:grid;grid-template-columns:repeat(6,1fr);gap:22px;max-width:1100px;margin:0 auto;
-  }
-  .cast-card{
-    background:var(--card);border-radius:var(--radius);overflow:hidden;
-    border:1px solid var(--border);transition:transform .35s,box-shadow .35s;
-  }
-  .cast-card:hover{transform:scale(1.04);box-shadow:0 12px 40px rgba(0,0,0,.35)}
-  .cast-card .cast-img{
-    width:100%;aspect-ratio:1;object-fit:cover;
-    background:linear-gradient(135deg,#1a2340,#2a3458);transition:transform .5s;
-  }
-  .cast-card:hover .cast-img{transform:scale(1.08)}
-  .cast-card .cast-info{padding:16px;text-align:center}
-  .cast-card .cast-info h4{font-size:1rem;font-weight:700;margin-bottom:4px}
-  .cast-card .cast-info p{font-size:.8rem;color:var(--secondary);line-height:1.5}
-
-  /* ── Reviews ── */
-  .reviews-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:1200px;margin:0 auto;
-  }
-  .review-card{
-    background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--border);
-    border-radius:var(--radius);padding:30px 24px;
-    transition:transform .35s,box-shadow .35s;
-  }
-  .review-card:hover{transform:translateY(-5px);box-shadow:0 10px 36px rgba(0,0,0,.3)}
-  .review-stars{color:var(--accent);font-size:1.1rem;margin-bottom:14px;letter-spacing:2px}
-  .review-card blockquote{font-size:.92rem;color:var(--secondary);line-height:1.65;margin-bottom:20px;font-style:italic}
-  .review-author{display:flex;align-items:center;gap:12px}
-  .review-avatar{
-    width:40px;height:40px;border-radius:50%;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
-    display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;
-  }
-  .review-author span{font-size:.88rem;font-weight:600}
-  .review-author small{display:block;font-size:.75rem;color:var(--secondary);font-weight:400}
-
-  /* ── FAQ ── */
-  .faq-list{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
-  .faq-item{
-    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
-    transition:border-color .3s;
-  }
-  .faq-item.active{border-color:rgba(59,130,246,.3)}
-  .faq-question{
-    width:100%;padding:22px 26px;background:none;color:var(--text);
-    font-size:1rem;font-weight:600;text-align:left;display:flex;
-    align-items:center;justify-content:space-between;gap:16px;
-  }
-  .faq-question:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:var(--radius)}
-  .faq-arrow{
-    width:24px;height:24px;flex-shrink:0;transition:transform .35s;
-    fill:none;stroke:var(--secondary);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
-  }
-  .faq-item.active .faq-arrow{transform:rotate(180deg);stroke:var(--primary)}
-  .faq-answer{
-    max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;
-  }
-  .faq-item.active .faq-answer{max-height:200px}
-  .faq-answer p{padding:0 26px 22px;font-size:.92rem;color:var(--secondary);line-height:1.7}
-
-  /* ── CTA ── */
-  .cta-section{
-    text-align:center;padding:120px 24px;position:relative;overflow:hidden;
-  }
-  .cta-section::before{
-    content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;
-    transform:translate(-50%,-50%);border-radius:50%;
-    background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%);
-    pointer-events:none;
-  }
-  .cta-section h2{
-    font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:18px;position:relative;
-  }
-  .cta-section p{
-    color:var(--secondary);font-size:1.08rem;max-width:560px;margin:0 auto 40px;position:relative;
-  }
-  .btn-glow{
-    position:relative;padding:18px 52px;border-radius:50px;font-size:1.1rem;font-weight:700;
-    background:linear-gradient(135deg,#2563EB,var(--primary),#60A5FA);
-    color:#fff;transition:transform .25s,box-shadow .3s;
-    box-shadow:0 4px 30px rgba(59,130,246,.4),0 0 60px rgba(59,130,246,.15);
-  }
-  .btn-glow:hover{
-    transform:translateY(-3px) scale(1.04);
-    box-shadow:0 6px 44px rgba(59,130,246,.6),0 0 80px rgba(59,130,246,.25);
-  }
-
-  /* ── Footer ── */
-  footer{
-    border-top:1px solid var(--border);padding:36px 24px;text-align:center;
-  }
-  .footer-links{display:flex;justify-content:center;gap:32px;margin-bottom:16px;flex-wrap:wrap}
-  .footer-links a{font-size:.88rem;color:var(--secondary);transition:color .25s}
-  .footer-links a:hover{color:var(--text)}
-  footer p{font-size:.8rem;color:rgba(200,208,224,.5)}
-
-  /* ── Modal ── */
-  .modal-backdrop{
-    position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;
-    background:rgba(5,8,18,.8);backdrop-filter:blur(12px);
-    opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;
-  }
-  .modal-backdrop.open{opacity:1;visibility:visible}
-  .modal{
-    background:var(--card);border:1px solid var(--border);border-radius:20px;
-    padding:48px 40px;max-width:480px;width:90%;text-align:center;
-    transform:scale(.9) translateY(20px);transition:transform .4s cubic-bezier(.16,1,.3,1);
-    box-shadow:0 24px 80px rgba(0,0,0,.5);position:relative;
-  }
-  .modal-backdrop.open .modal{transform:scale(1) translateY(0)}
-  .modal-close{
-    position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
-    background:rgba(255,255,255,.06);border:1px solid var(--border);
-    color:var(--secondary);font-size:1.2rem;display:flex;align-items:center;justify-content:center;
-    transition:background .25s,color .25s;
-  }
-  .modal-close:hover{background:rgba(255,255,255,.12);color:var(--text)}
-  .modal-icon{
-    width:72px;height:72px;border-radius:50%;margin:0 auto 24px;
-    background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(255,181,71,.1));
-    border:1px solid rgba(59,130,246,.25);
-    display:flex;align-items:center;justify-content:center;
-  }
-  .modal-icon svg{width:32px;height:32px;fill:var(--primary)}
-  .modal h3{font-size:1.5rem;font-weight:800;margin-bottom:14px}
-  .modal p{color:var(--secondary);font-size:.95rem;line-height:1.7;margin-bottom:32px}
-  .modal .btn-primary{width:100%;padding:16px;font-size:1.05rem}
-
-  /* ── Scroll Animations ── */
-  .fade-up{
-    opacity:0;transform:translateY(40px);
-    transition:opacity .7s ease,transform .7s ease;
-  }
-  .fade-up.visible{opacity:1;transform:translateY(0)}
-
-  /* ── Particles ── */
-  .particle{
-    position:absolute;border-radius:50%;pointer-events:none;
-    animation:floatUp linear infinite;
-  }
-  @keyframes floatUp{
-    0%{opacity:0;transform:translateY(0) scale(0)}
-    10%{opacity:1;transform:scale(1)}
-    90%{opacity:.6}
-    100%{opacity:0;transform:translateY(-100vh) scale(.3)}
-  }
-
-  /* ── Mobile Nav ── */
-  .mobile-menu{
-    position:fixed;top:0;right:-100%;width:280px;height:100vh;z-index:1500;
-    background:rgba(11,16,32,.97);backdrop-filter:blur(20px);
-    border-left:1px solid var(--border);padding:80px 32px 32px;
-    transition:right .4s cubic-bezier(.16,1,.3,1);
-    display:flex;flex-direction:column;gap:24px;
-  }
-  .mobile-menu.open{right:0}
-  .mobile-menu a{font-size:1.15rem;font-weight:600;color:var(--secondary);transition:color .25s}
-  .mobile-menu a:hover{color:var(--text)}
-  .mobile-overlay{
-    position:fixed;inset:0;z-index:1400;background:rgba(0,0,0,.5);
-    opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
-  }
-  .mobile-overlay.open{opacity:1;visibility:visible}
-
-  /* ── Responsive ── */
-  @media(max-width:1100px){
-    .video-grid{grid-template-columns:repeat(3,1fr)}
-    .cast-grid{grid-template-columns:repeat(3,1fr)}
-    .reviews-grid{grid-template-columns:repeat(2,1fr)}
-  }
-  @media(max-width:768px){
-    header{padding:14px 20px}
-    nav{display:none}
-    .mobile-toggle{display:block}
-    .hero{padding:120px 20px 80px}
-    section{padding:70px 20px}
-    .section-header{margin-bottom:40px}
-    .video-grid{grid-template-columns:repeat(2,1fr);gap:14px}
-    .features-grid{grid-template-columns:repeat(2,1fr);gap:14px}
-    .cast-grid{grid-template-columns:repeat(2,1fr);gap:14px}
-    .reviews-grid{grid-template-columns:1fr;max-width:440px}
-    .features-grid .feature-card:last-child{grid-column:span 2}
-  }
-  @media(max-width:480px){
-    .video-grid{grid-template-columns:1fr;max-width:360px}
-    .features-grid{grid-template-columns:1fr}
-    .features-grid .feature-card:last-child{grid-column:span 1}
-    .cast-grid{grid-template-columns:repeat(2,1fr)}
-    .modal{padding:36px 24px}
-    .btn-primary,.btn-secondary{padding:13px 28px;font-size:.92rem}
-    .btn-glow{padding:15px 36px;font-size:1rem}
-  }
-</style>
+  gtag('config', 'G-2P45G5VYDC');
+</script>
 </head>
 <body>
-
-<!-- Header -->
-<header id="header">
-  <div class="logo">OBX 5 Bloopers</div>
-  <nav>
-    <a href="#hero">Home</a>
-    <a href="#videos">Videos</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#faq">FAQ</a>
-  </nav>
-  <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu">&#9776;</button>
-</header>
-
-<!-- Mobile Menu -->
-<div class="mobile-overlay" id="mobileOverlay"></div>
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#hero">Home</a>
-  <a href="#videos">Videos</a>
-  <a href="#gallery">Gallery</a>
-  <a href="#faq">FAQ</a>
-</div>
-
-<!-- Hero -->
-<section class="hero" id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-particles" id="heroParticles"></div>
-  <div class="hero-content fade-up">
-    <h1>🎬 Outer Banks 5 Bloopers &<br><span>Behind the Scenes</span></h1>
-    <p>Watch hilarious cast bloopers, funny mistakes, deleted scenes, behind-the-scenes moments, cast interviews and exclusive filming footage from every season.</p>
-    <div class="hero-btns">
-      <button class="btn-primary" onclick="openModal(event)">Unlock Collection</button>
-      <a href="#videos" class="btn-secondary">Browse Videos</a>
+    <!-- Background -->
+    <div class="background" id="background">
+        <!-- Background elements will be added here by JavaScript -->
     </div>
-  </div>
-</section>
 
-<!-- Video Library -->
-<section id="videos">
-  <div class="section-header fade-up">
-    <h2>Video Library</h2>
-    <p>Exclusive bloopers and behind-the-scenes content from the OBX cast and crew.</p>
-  </div>
-  <div class="video-grid" id="videoGrid"></div>
-</section>
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <img class="logo" alt="Brawl Stars Logo" src="https://i.postimg.cc/5tCSmN3z/Design-sans-titre-(15).png">
+            <h2 class="title">Brawler Generator</h2>
+            <div class="status-container">
+                <div class="status-card">
+                    <span class="status-label">Status:</span> <span class="status-online">Online</span>
+                </div>
+                <div class="status-card">
+                    <span class="status-label">Players Online:</span> <span class="status-online" id="onlineUsersCount">75</span>
+                </div>
+            </div>
+        </div>
 
-<!-- What You'll Find -->
-<section id="gallery">
-  <div class="section-header fade-up">
-    <h2>What You'll Find</h2>
-    <p>A curated collection of the best off-camera moments from the Outer Banks set.</p>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card fade-up">
-      <span class="feature-icon">😂</span>
-      <h3>Funny Bloopers</h3>
-      <p>Hilarious mistakes, forgotten lines, and uncontrollable laughter from the cast.</p>
+        <!-- Items grid -->
+        <ul class="items-grid" id="itemsGrid">
+            <!-- Items will be populated by JavaScript -->
+        </ul>
     </div>
-    <div class="feature-card fade-up">
-      <span class="feature-icon">🎥</span>
-      <h3>Behind the Scenes</h3>
-      <p>See how your favorite scenes were filmed with exclusive crew footage.</p>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <img class="notification-avatar" id="notificationAvatar" src="/placeholder.svg" alt="Avatar">
+            <div>
+                <p class="notification-user" id="notificationUser"></p>
+                <p class="notification-action" id="notificationAction"></p>
+            </div>
+        </div>
     </div>
-    <div class="feature-card fade-up">
-      <span class="feature-icon">🎬</span>
-      <h3>Deleted Scenes</h3>
-      <p>Scenes that didn't make the final cut — some funny, some surprising.</p>
-    </div>
-    <div class="feature-card fade-up">
-      <span class="feature-icon">❤️</span>
-      <h3>Cast Chemistry</h3>
-      <p>Watch the natural bond between cast members when the cameras stop rolling.</p>
-    </div>
-    <div class="feature-card fade-up">
-      <span class="feature-icon">📷</span>
-      <h3>On-Set Moments</h3>
-      <p>Candid captures from the beautiful Outer Banks filming locations.</p>
-    </div>
-    <div class="feature-card fade-up">
-      <span class="feature-icon">🎤</span>
-      <h3>Interviews</h3>
-      <p>Exclusive cast and crew interviews sharing their favorite memories.</p>
-    </div>
-  </div>
-</section>
 
-<!-- Cast -->
-<section>
-  <div class="section-header fade-up">
-    <h2>The Cast</h2>
-    <p>The talented actors who bring the Outer Banks characters to life.</p>
-  </div>
-  <div class="cast-grid" id="castGrid"></div>
-</section>
+    <!-- Modal -->
+    <section class="modal" id="modal">
+        <div class="modal-content">
+            <!-- This image is now dynamic based on clicked card -->
+            <img id="modalSelectedCard" class="modal-selected-card" src="" alt="Selected Brawler">
+            <div class="step" id="step1">
+                <input class="username-input" placeholder="Enter Your Player Tag" type="text" id="usernameInput">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn" id="actionBtn">Get Brawler</button>
+                <button class="btn cancel" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+    </section>
 
-<!-- Fan Reviews -->
-<section>
-  <div class="section-header fade-up">
-    <h2>Fan Reviews</h2>
-    <p>What fans are saying about the collection.</p>
-  </div>
-  <div class="reviews-grid" id="reviewsGrid"></div>
-</section>
+    <!-- Transferring Modal -->
+    <section class="transferring-modal" id="transferringModal">
+        <div class="transferring-content">
+            <div class="loading-animation">
+                <div></div><div></div><div></div>
+                <div></div><div></div><div></div>
+                <div></div><div></div><div></div>
+            </div>
+            <div class="transferring-text">
+                Generating <span id="transferringItemName">Brawler</span>...
+            </div>
+        </div>
+    </section>
 
-<!-- FAQ -->
-<section id="faq">
-  <div class="section-header fade-up">
-    <h2>Frequently Asked Questions</h2>
-    <p>Everything you need to know about the collection.</p>
-  </div>
-  <div class="faq-list" id="faqList"></div>
-</section>
+    <script>
+        // Data for New Brawl Stars Hero/Skin Cards
+        const items = [
+            { name: "Amber", image: "https://i.postimg.cc/bGmz1950/Amber-Skin-Default.webp" },
+            { name: "Chester", image: "https://i.postimg.cc/d7ss7x51/Chester-Skin-Default.webp" },
+            { name: "Cordelius", image: "https://i.postimg.cc/5H44HRs4/Cordelius-Skin-Default.webp" },
+            { name: "Crow", image: "https://i.postimg.cc/HJYYJh6W/Crow-Skin-Default.webp" },
+            { name: "Draco", image: "https://i.postimg.cc/4KffKSWh/Draco-Skin-Default.webp" },
+            { name: "Kaze", image: "https://i.postimg.cc/87BkzSmj/Kaze-Skin-Default.webp" },
+            { name: "Kenji", image: "https://i.postimg.cc/wtqqtGwh/Kenji-Skin-Default.webp" },
+            { name: "Kit", image: "https://i.postimg.cc/FfrrfBTb/Kit-Skin-Default.webp" },
+            { name: "Leon", image: "https://i.postimg.cc/67M9CfPr/Leon-Skin-Default.webp" },
+            { name: "Meg", image: "https://i.postimg.cc/cKxxKbFv/Meg-Skin-Default.webp" },
+            { name: "Pierce", image: "https://i.postimg.cc/f3zz3r8S/Pierce-Skin-Default.webp" },
+            { name: "Sandy", image: "https://i.postimg.cc/bGyyGBm9/Sandy-Skin-Default.webp" },
+            { name: "Sirius", image: "https://i.postimg.cc/VSffSVKz/Sirius-Skin-Default.webp" },
+            { name: "Spike", image: "https://i.postimg.cc/cKFsfBzQ/Spike-Skin-Default.webp" },
+            { name: "Surge", image: "https://i.postimg.cc/DWx21PN1/Surge-Skin-Default.webp" }
+        ];
 
-<!-- CTA -->
-<section class="cta-section fade-up">
-  <h2>Ready to See What Happened<br>Behind the Cameras?</h2>
-  <p>Unlock the entire collection and enjoy hilarious moments from the cast.</p>
-  <button class="btn-glow" onclick="openModal(event)">Unlock Videos</button>
-</section>
+        // Array of evolved character images for background animation (using new skins as floating icons too for relevance)
+        const floatingIcons = [
+            "https://i.postimg.cc/wtqqtGwh/Kenji-Skin-Default.webp",
+            "https://i.postimg.cc/67M9CfPr/Leon-Skin-Default.webp",
+            "https://i.postimg.cc/cKFsfBzQ/Spike-Skin-Default.webp",
+            "https://i.postimg.cc/bGyyGBm9/Sandy-Skin-Default.webp",
+            "https://i.postimg.cc/4KffKSWh/Draco-Skin-Default.webp",
+            "https://i.postimg.cc/bGmz1950/Amber-Skin-Default.webp"
+        ];
 
-<!-- Footer -->
-<footer>
-  <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="#">Contact</a>
-  </div>
-  <p>&copy; 2025 OBX Bloopers. All rights reserved. Not affiliated with Netflix.</p>
-</footer>
+        // Updated notification data for Brawl Stars theme
+        const notificationsData = [
+            { user: "ProPlayer", action: "Just got Kenji!", avatar: "https://i.postimg.cc/ZKF1FwdH/5oaaz9.jpg" },
+            { user: "StarPlayer", action: "Found a Rare Skin!", avatar: "https://growgarden.dev/avatar/john.png" },
+            { user: "BrawlMaster", action: "Unlocked Leon Skin!", avatar: "https://i.postimg.cc/8zzndNDk/94060b112aa64a2cad30c3dcd253f155.jpg" },
+            { user: "CrownChaser", action: "Got Spike Skin!", avatar: "https://i.postimg.cc/6pPzdZYz/3-0avatar.webp" },
+            { user: "LadderKing", action: "Just got Amber!", avatar: "https://i.postimg.cc/RVsTBf59/5e16f5d62d27adf87f3ba9d5d4dd0fbb.jpg" },
+            { user: "SkinCollector", action: "Unlocked Crow Skin!", avatar: "https://i.postimg.cc/5N0wn0Hr/e0c2685cf4573fcdae954f000c35faf6.jpg" }
+        ];
 
-<!-- Modal -->
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal" role="dialog" aria-modal="true">
-    <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
-    <div class="modal-icon">
-      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
-    </div>
-    <h3>Unlock This Video</h3>
-    <p>This content is protected to prevent automated access. Please complete a quick human verification to unlock the video library.</p>
-    <button class="btn-primary" onclick="openModal(event)">Continue to Verification</button>
-  </div>
-</div>
+        // State variables
+        let floatingElements = [];
+        let backgroundElements = [];
+        let currentNotificationIndex = 0;
+        let selectedItem = null;
+        let animationFrameId = null;
 
-<script>
-/* ── Video Data ── */
-const videos = [
-  {title:"Season 5 Behind the Scenes",runtime:"12:34",image:"https://i.postimg.cc/L67Lyggw/IMG-20260727-011850.jpg"},
-  {title:"Blooper Compilation",runtime:"18:22",image:"https://i.postimg.cc/Hn8sjnWL/IMG-20260727-011755.jpg"},
-  {title:"Sarah & John B Laughing",runtime:"8:45",image:"https://i.postimg.cc/q7Y7r20j/IMG-20260727-012023.jpg"},
-  {title:"Cast Pranks",runtime:"14:10",image:"https://i.postimg.cc/1zRFXGk8/IMG-20260727-011830.jpg"},
-  {title:"Deleted Scenes",runtime:"22:08",image:"https://i.postimg.cc/Vs2XgbCB/IMG-20260727-011806.jpg"},
-  {title:"Cast Interviews",runtime:"25:41",image:"https://i.postimg.cc/4xgL809S/IMG-20260727-034024.jpg"},
-  {title:"Funny Mistakes",runtime:"9:56",image:"https://i.postimg.cc/4NCBd0Bv/IMG-20260727-034037.jpg"},
-  {title:"Crew Moments",runtime:"13:27",image:"https://i.postimg.cc/rFLKzGWL/IMG-20260727-011922.jpg"},
-  {title:"Never Seen Clips",runtime:"19:05",image:"https://i.postimg.cc/DyddzwSc/IMG-20260727-034115.jpg"},
-  {title:"JJ's Funniest Bloopers",runtime:"31:12",image:"https://i.postimg.cc/SNqCHbgc/IMG-20260727-034103.jpg"}
-];
+        // Online Users Counter variables
+        let currentOnlineUsers = 75; // Initial value (Mid point of 20-125)
+        const minUsers = 20; // New range 20-125
+        const maxUsers = 125; // New range 20-125
 
-const lockSVG = `<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>`;
+        // Sound effect function
+        function playClickSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
 
-const videoGrid = document.getElementById('videoGrid');
-videos.forEach(v => {
-  const card = document.createElement('div');
-  card.className = 'video-card fade-up';
-  card.onclick = openModal;
-  card.innerHTML = `
-    <div class="thumb" style="background-image:url('${v.image}')"></div>
-    <div class="overlay">
-      <div class="lock-icon">${lockSVG}</div>
-    </div>
-    <div class="click-hint">Click to Unlock</div>
-    <div class="info">
-      <h3>${v.title}</h3>
-      <span class="runtime">${v.runtime}</span>
-    </div>
-  `;
-  videoGrid.appendChild(card);
-});
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
 
-/* ── Cast Data ── */
-const cast = [
-  {name:"John B",desc:"The charismatic leader of the Pogues",seed:"castjohn"},
-  {name:"Sarah",desc:"The fearless Kook who joined the Pogues",seed:"castsarah"},
-  {name:"JJ",desc:"The wild, loyal best friend",seed:"castjj2"},
-  {name:"Pope",desc:"The smartest Pogue with a big heart",seed:"castpope"},
-  {name:"Kiara",desc:"The fierce and independent Pogue",seed:"castkiara"},
-  {name:"Rafe",desc:"The troubled and intense antagonist",seed:"castrafe"}
-];
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
 
-const castGrid = document.getElementById('castGrid');
-cast.forEach(c => {
-  const card = document.createElement('div');
-  card.className = 'cast-card fade-up';
-  card.innerHTML = `
-    <div style="overflow:hidden;border-radius:var(--radius) var(--radius) 0 0">
-      <img class="cast-img" src="https://picsum.photos/seed/${c.seed}/300/300" alt="${c.name}" loading="lazy">
-    </div>
-    <div class="cast-info">
-      <h4>${c.name}</h4>
-      <p>${c.desc}</p>
-    </div>
-  `;
-  castGrid.appendChild(card);
-});
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
 
-/* ── Reviews Data ── */
-const reviews = [
-  {text:"Funniest thing I've watched. The JJ bloopers had me crying.",name:"Mia T.",label:"Verified Fan"},
-  {text:"I couldn't stop laughing. The cast chemistry is incredible off-camera too.",name:"Jake R.",label:"OBX Superfan"},
-  {text:"Way better than I expected. So much exclusive content I'd never seen before.",name:"Sophie L.",label:"Season 5 Fan"},
-  {text:"A must-see for every OBX fan. The deleted scenes alone are worth it.",name:"Daniel K.",label:"Pogue For Life"}
-];
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
 
-const reviewsGrid = document.getElementById('reviewsGrid');
-reviews.forEach((r,i) => {
-  const card = document.createElement('div');
-  card.className = 'review-card fade-up';
-  card.innerHTML = `
-    <div class="review-stars">★★★★★</div>
-    <blockquote>"${r.text}"</blockquote>
-    <div class="review-author">
-      <div class="review-avatar">${r.name.charAt(0)}</div>
-      <div><span>${r.name}</span><small>${r.label}</small></div>
-    </div>
-  `;
-  reviewsGrid.appendChild(card);
-});
+        // Transferring modal functions
+        function showTransferringModal(itemName) {
+            document.getElementById('transferringItemName').textContent = itemName;
+            document.getElementById('transferringModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
 
-/* ── FAQ Data ── */
-const faqs = [
-  {q:"Does it include every season?",a:"Yes! The collection covers bloopers and behind-the-scenes footage from every season of Outer Banks, including the latest season."},
-  {q:"Can I watch on mobile?",a:"Absolutely. The entire collection is fully responsive and works perfectly on smartphones, tablets, and desktop browsers."},
-  {q:"Are new videos added?",a:"Yes, we regularly update the library with new content as it becomes available, including new seasons and exclusive clips."},
-  {q:"How do I unlock the collection?",a:"Simply click on any video and complete a quick verification step. Once verified, you'll have full access to the entire library."}
-];
+        function hideTransferringModal() {
+            document.getElementById('transferringModal').classList.remove('show');
+        }
 
-const faqList = document.getElementById('faqList');
-faqs.forEach((f,i) => {
-  const item = document.createElement('div');
-  item.className = 'faq-item fade-up';
-  item.innerHTML = `
-    <button class="faq-question" aria-expanded="false">
-      <span>${f.q}</span>
-      <svg class="faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="faq-answer"><p>${f.a}</p></div>
-  `;
-  const btn = item.querySelector('.faq-question');
-  btn.addEventListener('click', () => {
-    const isActive = item.classList.contains('active');
-    document.querySelectorAll('.faq-item').forEach(el => {
-      el.classList.remove('active');
-      el.querySelector('.faq-question').setAttribute('aria-expanded','false');
-    });
-    if (!isActive) {
-      item.classList.add('active');
-      btn.setAttribute('aria-expanded','true');
-    }
-  });
-  faqList.appendChild(item);
-});
+        // Modal functions
+        function showModal(item) {
+            selectedItem = item;
+            playClickSound();
+            
+            // Update modal image to selected card
+            const modalImage = document.getElementById('modalSelectedCard');
+            modalImage.src = item.image;
+            modalImage.alt = item.name;
 
-/* ── Modal ── */
-const modalBackdrop = document.getElementById('modalBackdrop');
-const modalClose = document.getElementById('modalClose');
+            document.getElementById('modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+            resetModal();
+        }
 
-function openModal(e) {
-  e && e.stopPropagation();
-  modalBackdrop.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  modalBackdrop.classList.remove('open');
-  document.body.style.overflow = '';
-}
-modalClose.addEventListener('click', closeModal);
-modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+        function hideModal() {
+            document.getElementById('modal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            resetModal();
+        }
 
-/* ── Header Scroll ── */
-const header = document.getElementById('header');
-window.addEventListener('scroll', () => {
-  header.classList.toggle('scrolled', window.scrollY > 50);
-}, {passive: true});
+        function resetModal() {
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('actionBtn').textContent = 'Get Brawler';
+            document.getElementById('actionBtn').disabled = false;
+        }
 
-/* ── Mobile Menu ── */
-const mobileToggle = document.getElementById('mobileToggle');
-const mobileMenu = document.getElementById('mobileMenu');
-const mobileOverlay = document.getElementById('mobileOverlay');
+        function actionStep() {
+            playClickSound();
+            const usernameInput = document.getElementById('usernameInput');
+            const username = usernameInput.value.trim();
+            const actionBtn = document.getElementById('actionBtn');
 
-function toggleMobile(open) {
-  mobileMenu.classList.toggle('open', open);
-  mobileOverlay.classList.toggle('open', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-}
-mobileToggle.addEventListener('click', () => toggleMobile(true));
-mobileOverlay.addEventListener('click', () => toggleMobile(false));
-mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMobile(false)));
+            if (username) {
+                actionBtn.textContent = 'Getting...';
+                actionBtn.disabled = true;
 
-/* ── Scroll Animations ── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => entry.target.classList.add('visible'), i * 60);
-      observer.unobserve(entry.target);
-    }
-  });
-}, {threshold: 0.1, rootMargin: '0px 0px -40px 0px'});
+                hideModal();
+                showTransferringModal(selectedItem.name);
 
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+                setTimeout(() => {
+                    hideTransferringModal();
+                    resetModal();
+                    window.location.href = 'https://plaiovagames.site/cl/i/6nn5nj';
+                }, 2000);
+            } else {
+                alert('Please enter your Player Tag.');
+            }
+        }
 
-/* ── Ripple Effect ── */
-document.querySelectorAll('.btn-primary, .btn-glow').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-    this.appendChild(ripple);
-    ripple.addEventListener('animationend', () => ripple.remove());
-  });
-});
+        // Function to handle image loading errors
+        function handleImageError(img, fallbackText) {
+            img.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.className = 'image-fallback';
+            fallback.textContent = fallbackText;
+            img.parentNode.appendChild(fallback);
+        }
 
-/* ── Hero Particles ── */
-const particlesContainer = document.getElementById('heroParticles');
-function createParticle() {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  const size = Math.random() * 4 + 2;
-  const x = Math.random() * 100;
-  const dur = Math.random() * 8 + 6;
-  const delay = Math.random() * 5;
-  const isAccent = Math.random() > 0.6;
-  p.style.cssText = `
-    width:${size}px;height:${size}px;left:${x}%;bottom:-10px;
-    background:${isAccent ? 'rgba(255,181,71,.6)' : 'rgba(59,130,246,.5)'};
-    box-shadow:0 0 ${size * 3}px ${isAccent ? 'rgba(255,181,71,.3)' : 'rgba(59,130,246,.25)'};
-    animation-duration:${dur}s;animation-delay:${delay}s;
-  `;
-  particlesContainer.appendChild(p);
-  setTimeout(() => p.remove(), (dur + delay) * 1000);
-}
-for (let i = 0; i < 30; i++) createParticle();
-setInterval(() => { if (document.visibilityState === 'visible') createParticle(); }, 800);
-</script>
+        // Initialize items grid
+        function initializeItemsGrid() {
+            const grid = document.getElementById('itemsGrid');
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'item-card';
+                li.innerHTML = `
+                    <img alt="${item.name}" class="item-image" src="${item.image}">
+                    <p class="item-name">${item.name}</p>
+                `;
+                
+                // Add error handling for images
+                const img = li.querySelector('.item-image');
+                img.onerror = function() {
+                    handleImageError(this, item.name);
+                };
+                
+                li.addEventListener('click', () => showModal(item));
+                grid.appendChild(li);
+            });
+        }
+
+        // Initialize mystical background elements
+        function initializeBackgroundElements() {
+            const background = document.getElementById('background');
+            
+            // Create energy lines
+            for (let i = 0; i < 5; i++) {
+                const line = document.createElement('div');
+                line.className = 'energy-line';
+                line.style.top = `${20 + i * 20}%`;
+                line.style.width = `${50 + Math.random() * 50}%`;
+                line.style.left = `${Math.random() * 50}%`;
+                line.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+                line.style.opacity = 0.1 + Math.random() * 0.2;
+                background.appendChild(line);
+                
+                backgroundElements.push({
+                    element: line,
+                    type: 'line',
+                    animationSpeed: 0.1 + Math.random() * 0.3,
+                    animationPhase: Math.random() * Math.PI * 2
+                });
+            }
+            
+            // Create light particles
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = 2 + Math.random() * 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.opacity = 0.2 + Math.random() * 0.5;
+                background.appendChild(particle);
+                
+                backgroundElements.push({
+                    element: particle,
+                    type: 'particle',
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    speed: 0.2 + Math.random() * 0.5,
+                    direction: Math.random() * Math.PI * 2,
+                    size: size
+                });
+            }
+            
+            // Create light shards
+            for (let i = 0; i < 10; i++) {
+                const shard = document.createElement('div');
+                shard.className = 'light-shard';
+                shard.style.left = `${Math.random() * 100}%`;
+                shard.style.top = `${Math.random() * 100}%`;
+                shard.style.opacity = 0.1 + Math.random() * 0.3;
+                shard.style.transform = `rotate(${Math.random() * 360}deg)`;
+                background.appendChild(shard);
+                
+                backgroundElements.push({
+                    element: shard,
+                    type: 'shard',
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    speed: 0.1 + Math.random() * 0.3,
+                    direction: Math.random() * Math.PI * 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 2 - 1
+                });
+            }
+        }
+
+        // Initialize floating icons
+        function initializeFloatingIcons() {
+            const background = document.getElementById('background');
+            floatingIcons.forEach((iconUrl, index) => {
+                const element = document.createElement('div');
+                element.className = 'floating-icon';
+
+                const img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = 'Floating Character';
+                
+                // Add error handling for floating icons
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'image-fallback';
+                    fallback.textContent = 'Icon';
+                    element.appendChild(fallback);
+                };
+                
+                element.appendChild(img);
+
+                const floatingData = {
+                    id: index,
+                    element: element,
+                    x: Math.random() * (window.innerWidth - 170),
+                    y: Math.random() * (window.innerHeight - 170),
+                    speed: 0.5 + Math.random() * 1,
+                    direction: Math.random() * Math.PI * 2
+                };
+
+                element.style.left = floatingData.x + 'px';
+                element.style.top = floatingData.y + 'px';
+
+                floatingElements.push(floatingData);
+                background.appendChild(element);
+            });
+        }
+
+        // Animate background elements
+        function animateBackgroundElements() {
+            backgroundElements.forEach(elementData => {
+                if (elementData.type === 'line') {
+                    // Animate energy lines with pulsing effect
+                    elementData.animationPhase += elementData.animationSpeed;
+                    const opacity = 0.1 + Math.sin(elementData.animationPhase) * 0.1;
+                    elementData.element.style.opacity = opacity;
+                } else if (elementData.type === 'particle') {
+                    // Move particles slowly
+                    elementData.x += Math.cos(elementData.direction) * elementData.speed;
+                    elementData.y += Math.sin(elementData.direction) * elementData.speed;
+                    
+                    // Wrap around screen
+                    if (elementData.x < 0) elementData.x = window.innerWidth;
+                    if (elementData.x > window.innerWidth) elementData.x = 0;
+                    if (elementData.y < 0) elementData.y = window.innerHeight;
+                    if (elementData.y > window.innerHeight) elementData.y = 0;
+                    
+                    elementData.element.style.left = elementData.x + 'px';
+                    elementData.element.style.top = elementData.y + 'px';
+                } else if (elementData.type === 'shard') {
+                    // Move and rotate shards
+                    elementData.x += Math.cos(elementData.direction) * elementData.speed;
+                    elementData.y += Math.sin(elementData.direction) * elementData.speed;
+                    elementData.rotation += elementData.rotationSpeed;
+                    
+                    // Wrap around screen
+                    if (elementData.x < 0) elementData.x = window.innerWidth;
+                    if (elementData.x > window.innerWidth) elementData.x = 0;
+                    if (elementData.y < 0) elementData.y = window.innerHeight;
+                    if (elementData.y > window.innerHeight) elementData.y = 0;
+                    
+                    elementData.element.style.left = elementData.x + 'px';
+                    elementData.element.style.top = elementData.y + 'px';
+                    elementData.element.style.transform = `rotate(${elementData.rotation}deg)`;
+                }
+            });
+        }
+
+        // Animate floating icons
+        function animateFloatingIcons() {
+            floatingElements.forEach(elementData => {
+                let newX = elementData.x + Math.cos(elementData.direction) * elementData.speed;
+                let newY = elementData.y + Math.sin(elementData.direction) * elementData.speed;
+                let newDirection = elementData.direction;
+
+                if (newX <= 0 || newX >= window.innerWidth - 170) {
+                    newDirection = Math.PI - elementData.direction;
+                    newX = Math.max(0, Math.min(newX, window.innerWidth - 170));
+                }
+                if (newY <= 0 || newY >= window.innerHeight - 170) {
+                    newDirection = -elementData.direction;
+                    newY = Math.max(0, Math.min(newY, window.innerHeight - 170));
+                }
+
+                elementData.x = newX;
+                elementData.y = newY;
+                elementData.direction = newDirection;
+
+                elementData.element.style.left = newX + 'px';
+                elementData.element.style.top = newY + 'px';
+            });
+        }
+
+        // Notification update logic
+        function updateNotification() {
+            const notification = document.getElementById('notification');
+            const user = document.getElementById('notificationUser');
+            const action = document.getElementById('notificationAction');
+            const avatar = document.getElementById('notificationAvatar');
+
+            notification.classList.add('fade-out');
+
+            setTimeout(() => {
+                currentNotificationIndex = (currentNotificationIndex +1) % notificationsData.length;
+                const current = notificationsData[currentNotificationIndex];
+
+                user.textContent = current.user;
+                action.textContent = current.action;
+                avatar.src = current.avatar;
+
+                notification.classList.remove('fade-out');
+            }, 500);
+        }
+
+        // Function to animate online users count
+        function animateOnlineUsersCount(start, end, duration) {
+            const range = end - start;
+            const startTime = performance.now();
+            const onlineUsersElement = document.getElementById('onlineUsersCount');
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration,1);
+
+                const animatedValue = start + (range * progress);
+                onlineUsersElement.textContent = Math.floor(animatedValue).toLocaleString();
+
+                if (progress <1) {
+                    requestAnimationFrame(step);
+                } else {
+                    onlineUsersElement.textContent = end.toLocaleString();
+                    currentOnlineUsers = end;
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Function to update online users count with a new random target
+        function updateOnlineUsers() {
+            const targetUsers = Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
+            animateOnlineUsersCount(currentOnlineUsers, targetUsers, 1500);
+        }
+
+        // Initialize everything
+        function init() {
+            initializeItemsGrid();
+            initializeBackgroundElements();
+            initializeFloatingIcons();
+
+            const notificationUser = document.getElementById('notificationUser');
+            const notificationAction = document.getElementById('notificationAction');
+            const notificationAvatar = document.getElementById('notificationAvatar');
+            const initialNotification = notificationsData[0];
+            notificationUser.textContent = initialNotification.user;
+            notificationAction.textContent = initialNotification.action;
+            notificationAvatar.src = initialNotification.avatar;
+
+            document.getElementById('onlineUsersCount').textContent = currentOnlineUsers.toLocaleString();
+
+            // Start animations
+            function animate() {
+                animateBackgroundElements();
+                animateFloatingIcons();
+                animationFrameId = requestAnimationFrame(animate);
+            }
+            animate();
+            
+            setInterval(updateNotification, 4000);
+            setInterval(updateOnlineUsers, 6000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('actionBtn').addEventListener('click', actionStep);
+            document.getElementById('cancelBtn').addEventListener('click', () => {
+                playClickSound();
+                hideModal();
+            });
+
+            document.getElementById('modal').addEventListener('click', (e) => {
+                if (e.target.id === 'modal') {
+                    hideModal();
+                }
+            });
+
+            document.getElementById('transferringModal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('transferring-modal')) {
+                    hideTransferringModal();
+                }
+            });
+
+            init();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            floatingElements.forEach(elementData => {
+                elementData.x = Math.min(elementData.x, window.innerWidth - 170);
+                elementData.y = Math.min(elementData.y, window.innerHeight - 170);
+                if (elementData.element) {
+                    elementData.element.style.left = elementData.x + 'px';
+                    elementData.element.style.top = elementData.y + 'px';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
